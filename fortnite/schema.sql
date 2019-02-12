@@ -9,7 +9,8 @@ CREATE TABLE user (
   password TEXT NOT NULL,
   first_name TEXT NOT NULL,
   last_name TEXT NOT NULL,
-  is_admin INTEGER NOT NULL
+  is_admin INTEGER NOT NULL DEFAULT 0,
+  is_approved INTEGER NOT NULL DEFAULT 0
 );
 
 CREATE TABLE user_reservation_limits (

@@ -17,7 +17,7 @@ venv.bak/
 __pycache__/
 *.py[cod]
 *$py.class
-
+*.swp
 
 .pytest_cache/
 .coverage

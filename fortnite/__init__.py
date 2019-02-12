@@ -24,12 +24,15 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    from fortnite import db
+    from . import db
     db.init_app(app)
 
+    from . import register
+    app.register_blueprint(register.bp)
+
     # a simple page that says hello
-    @app.route('/hello')
+    @app.route('/')
     def hello():
-        return 'Hello, World!'
+        return 'Fortnite!'
 
     return app
