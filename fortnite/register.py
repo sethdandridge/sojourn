@@ -33,14 +33,18 @@ def register():
             error = f'Email {email} is already registered'
 
         if error is None:
-            db.execute(
+            cursor = db.cursor()
+            cursor.execute(
                 'INSERT INTO user (email, password, first_name, last_name) VALUES (?, ?, ?, ?)',
                 (email, generate_password_hash(password), first_name, last_name)
             )
             db.commit()
+            user_id = cursor.lastrowid
+            cursor.close()
  
-            return redirect(url_for('login.login'))
+            session['user_id'] = user_id
+            return "success" #redirect(url_for('login.login'))
 
         flash(error)
 
-    return render_template('register/register.jinja2')
+    return  render_template('register/register.jinja2')

@@ -1,5 +1,5 @@
 import os
-from flask import Flask
+from flask import Flask, g, session
 
 def create_app(test_config=None):
     # create and configure the app
@@ -29,6 +29,12 @@ def create_app(test_config=None):
 
     from . import register
     app.register_blueprint(register.bp)
+
+    from . import login
+    app.register_blueprint(login.bp)
+
+    from . import logout
+    app.register_blueprint(logout.bp)
 
     # a simple page that says hello
     @app.route('/')
