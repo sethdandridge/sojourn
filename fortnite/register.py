@@ -41,7 +41,7 @@ def register():
             cursor.close()
  
             session['user_id'] = user_id
-            return "success" #redirect(url_for('login.login'))
+            return redirect(url_for('dashboard.index'))
 
         flash(error)
 

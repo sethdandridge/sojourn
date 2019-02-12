@@ -36,9 +36,16 @@ def create_app(test_config=None):
     from . import logout
     app.register_blueprint(logout.bp)
 
+    from . import dashboard
+    app.register_blueprint(dashboard.bp)
+    app.add_url_rule('/', endpoint='index')
+
+    from . import admin
+    app.register_blueprint(admin.bp)
+
     # a simple page that says hello
-    @app.route('/')
+    """@app.route('/')
     def hello():
-        return 'Fortnite!'
+        return 'Fortnite!'"""
 
     return app
