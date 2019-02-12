@@ -1,13 +1,11 @@
-import functools
-
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, session, url_for
+    Blueprint, flash, redirect, render_template, request, session, url_for
 )
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from fortnite.db import get_db
 
-bp = Blueprint('auth', __name__, url_prefix='/register')
+bp = Blueprint('register', __name__, url_prefix='/register')
 
 @bp.route('/', methods=('GET', 'POST'))
 def register():
@@ -47,4 +45,4 @@ def register():
 
         flash(error)
 
-    return  render_template('register/register.jinja2')
+    return render_template('register/register.jinja2')
