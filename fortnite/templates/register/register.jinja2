@@ -1,23 +1,32 @@
 {% extends 'base.jinja2' %}
+{% set active_page = "register" %}
 
 {% block header %}
-  <h1>{% block title %}Register{% endblock %}</h1>
+  <div class="form-header"><h1>{% block title %}Register{% endblock %}</h1></div>
 {% endblock %}
 
 {% block content %}
-  <form method="post">
-    <label for="first_name">First Name</label>
-    <input name="first_name" id="first_name" required>
+  <form method="post" class="register-form">
+    <div class="form-group">
+      <label for="first_name">First Name</label>
+      <input name="first_name" id="first_name" class="form-control" required />
+    </div>
 
-    <label for="last_name">Last Name</label>
-    <input name="last_name" id="last_name" required>
+    <div class="form-group">
+      <label for="last_name">Last Name</label>
+      <input name="last_name" id="last_name" class="form-control" required />
+    </div>
 
-    <label for="email">Email</label>
-    <input name="email" id="email" required>
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input name="email" id="email" type="email" class="form-control" required />
+    </div>
 
-    <label for="password">Password</label>
-    <input type="password" name="password" id="password" required>
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" name="password" class="form-control" id="password" required /> 
+    </div>
 
-    <input type="submit" value="Register">
+    <button type="submit" class="btn btn-primary">Register</button>
   </form>
 {% endblock %}
