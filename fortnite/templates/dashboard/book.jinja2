@@ -1,0 +1,9 @@
+{% extends 'base.jinja2' %}
+{% set active_page = "book" %}
+
+{% block header -%}
+  <h1>{% block title %}Book Reservation{% endblock %}</h1>
+{%- endblock %}
+{% block content %}
+Here's where you go to book a new reservation
+{% endblock %}

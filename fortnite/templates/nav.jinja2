@@ -1,5 +1,6 @@
 <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
   {% set left_navigation_bar = [
+      (url_for('dashboard.book'), 'book', 'Book', True, False, True),
   ] -%}
   {% set right_navigation_bar = [
       (url_for('register.register'), 'register', 'Register', False, True, False),
@@ -7,7 +8,7 @@
       (url_for('logout.logout'), 'logout', 'Log Out', True, False, True),
   ] -%}
   {% set active_page = active_page -%}
-  <a class="navbar-brand" href="/">FORNITE</a>
+  <a class="navbar-brand" href="/">FORTNITE</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls=".navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>

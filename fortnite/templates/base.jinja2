@@ -10,15 +10,15 @@
 <body>
 {% include "nav.jinja2" %}
 <main role="main" class="container">
-  <div class="starter-template">
-    <header>
-      {% block header %}{% endblock %}
-    </header>
-    {% for message in get_flashed_messages() %}
-    <div class="flash">{{ message }}</div>
-    {% endfor %}
-    {% block content %}{% endblock %}
+  {% for message in get_flashed_messages() %}
+  <div class="alert alert-danger" role="alert">
+    {{ message }}
   </div>
+  {% endfor -%}
+  <header>
+    {% block header %}{% endblock %}
+  </header>
+  {% block content %}{% endblock %}
 </main>
 <script src="{{ url_for('static', filename='js/jquery-3.0.0.slim.js') }}"></script>
 <script src="{{ url_for('static', filename='js/bootstrap.bundle.js') }}"></script>

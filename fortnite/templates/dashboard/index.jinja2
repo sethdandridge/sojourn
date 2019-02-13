@@ -4,6 +4,6 @@
 {% block header -%}
   <h1>{% block title %}Dashboard{% endblock %}</h1>
 {%- endblock %}
-{% block content %}
-Welcome home bb
-{% endblock %}
+{% block content -%}
+Welcome home, {% print(g.user['first_name']) %}
+{%- endblock %}
