@@ -1,0 +1,21 @@
+<nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+  {% set navigation_bar = [
+      (url_for('register.register'), 'register', 'Register', False, True, False),
+      (url_for('login.login'), 'login', 'Log In', False, True, False),
+      (url_for('logout.logout'), 'logout', 'Log Out', True, False, True),
+  ] -%}
+  {% set active_page = active_page -%}
+  <a class="navbar-brand" href="/">FORNITE</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample03" aria-controls="navbarsExample03" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarsExample03">
+    <ul class="navbar-nav mr-auto">
+      {%- for href, id, caption, is_shown_to_logged_in, is_shown_to_logged_out, is_shown_to_admin in navigation_bar %}
+      {%- if (g.user and is_shown_to_logged_in) or (g.user and g.user['is_admin'] and is_shown_to_admin) or (not g.user and is_shown_to_logged_out) %}
+      <li class="nav-item{% if id == active_page %} active{% endif%}"><a class="nav-link" href="{{ href|e }}">{{ caption|e }}</a></li>
+      {%- endif %}
+      {%- endfor %}
+    </ul>
+  </div>
+</nav>

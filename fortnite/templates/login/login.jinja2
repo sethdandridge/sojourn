@@ -1,9 +1,9 @@
 {% extends 'base.jinja2' %}
+{% set active_page = "login" %}
 
-{% block header %}
+{% block header -%}
   <h1>{% block title %}Log In{% endblock %}</h1>
-{% endblock %}
-
+{%- endblock %}
 {% block content %}
   <form method="post">
     <label for="email">Email</label>
