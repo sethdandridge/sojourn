@@ -22,7 +22,10 @@ __pycache__/
 .pytest_cache/
 .coverage
 htmlcov/
+coverage_html/
 
 dist/
 build/
 *.egg-info/
+
+to_do.txt
