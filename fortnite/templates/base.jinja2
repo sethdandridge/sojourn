@@ -1,22 +1,25 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
   <title>{% block title %}{% endblock %} - Fortnite</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/fortnite.css') }}" />
 </head>
 <body>
 {% include "nav.jinja2" %}
-<section class="content">
-  <header>
-    {% block header %}{% endblock %}
-  </header>
-  {% for message in get_flashed_messages() %}
+<main role="main" class="container">
+  <div class="starter-template">
+    <header>
+      {% block header %}{% endblock %}
+    </header>
+    {% for message in get_flashed_messages() %}
     <div class="flash">{{ message }}</div>
-  {% endfor %}
-  {% block content %}{% endblock %}
-</section>
+    {% endfor %}
+    {% block content %}{% endblock %}
+  </div>
+</main>
 <script src="{{ url_for('static', filename='js/jquery-3.0.0.slim.js') }}"></script>
 <script src="{{ url_for('static', filename='js/bootstrap.bundle.js') }}"></script>
 </body>
