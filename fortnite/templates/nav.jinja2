@@ -1,6 +1,7 @@
 <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
   {% set left_navigation_bar = [
       (url_for('dashboard.book'), 'dashboard book', 'Book', True, False, True),
+      (url_for('dashboard.reservations'), 'dashboard reservations', 'Reservations', True, False, True),
   ] -%}
   {% set right_navigation_bar = [
       (url_for('register.register'), 'register', 'Register', False, True, False),

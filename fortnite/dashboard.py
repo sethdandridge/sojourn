@@ -88,6 +88,14 @@ def book():
 
     return render_template("dashboard/book.jinja2", booked_dates=booked_dates)
 
+@bp.route("/reservations", methods=("GET", "POST"))
+@login_required
+def reservations():
+    db = get_db()
+    reservations = db.execute(
+        'SELECT * FROM reservation WHERE date(arrival) >= DATE("now");'
+    ).fetchall()
+    return render_template("dashboard/reservations.jinja2", reservations=reservations)
 
 @bp.route("/book/success")
 @login_required

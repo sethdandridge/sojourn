@@ -1,0 +1,13 @@
+{% extends 'base.jinja2' %}
+{% set active_page = "dashboard reservations" %}
+
+{% block header %}
+  <h1>{% block title %}Upcoming Reservations{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  {% print(reservations[0].keys()) %}<br />
+  {% for reservation in reservations %}
+    {{ reservation['id']}}, {{ reservation['user_id']}}, {{ reservation['name'] }}, {{ reservation['arrival'] }}, {{ reservation['departure'] }} <br/>
+  {% endfor %}
+{% endblock %}
