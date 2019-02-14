@@ -1,9 +1,59 @@
 {% extends 'base.jinja2' %}
-{% set active_page = "book" %}
+{% set active_page = "dashboard book" %}
 
-{% block header -%}
-  <h1>{% block title %}Book Reservation{% endblock %}</h1>
-{%- endblock %}
+{% block header %}
+<!--  <div class="form-header"><h1>{% block title %}Book Reservation{% endblock %}</h1></div> -->
+{% endblock %}
+
 {% block content %}
-Here's where you go to book a new reservation
+  <form method="post" class="register-form">
+    <div class="form-group">
+      <label for="arrival_date">Arrival Date</label>
+      <input data-toggle="arrival-date" name="arrival_date" id="arrival_date" class="form-control" required /> 
+    </div>
+
+    <div class="form-group">
+      <label for="departure_date">Departure Date</label>
+      <input data-toggle="departure-date" name="departure_date" id="departure_date" class="form-control" required />
+    </div>
+
+    <div class="form-group">
+      <label for="name">Name of Reservation (Optional)</label>
+      <input name="name" id="name" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Book</button>
+  </form>
+
+  <script src="{{ url_for('static', filename='js/datepicker.js') }}"></script>
+
+  <script>
+  // here be dragons
+
+  blackout_dates = [{% for booked_date in booked_dates %}
+    new Date({{ booked_date }}),
+  {%- endfor %}]
+
+  $.fn.datepicker.setDefaults({
+    autoHide: true,
+    startDate: Date.now(),
+    filter: function(date, view) {
+      for (i in blackout_dates) {
+        if (date.getTime() === blackout_dates[i].getTime() && view ==='day') {
+          return false;
+        }
+      }
+    },
+    format: 'yyyy-mm-dd',
+  });
+
+  arrival_picker = $('[data-toggle="arrival-date"]').datepicker();
+  departure_picker = $('[data-toggle="departure-date"]').datepicker();
+
+  arrival_picker.on('pick.datepicker', function (e) {
+    minimum_departure = new Date();
+    minimum_departure.setDate(e.date.getDate() + 1);
+    departure_picker.datepicker('setStartDate', minimum_departure);
+  });
+  </script>
 {% endblock %}

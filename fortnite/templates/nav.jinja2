@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
   {% set left_navigation_bar = [
-      (url_for('dashboard.book'), 'book', 'Book', True, False, True),
+      (url_for('dashboard.book'), 'dashboard book', 'Book', True, False, True),
   ] -%}
   {% set right_navigation_bar = [
       (url_for('register.register'), 'register', 'Register', False, True, False),
@@ -16,7 +16,7 @@
     <ul class="navbar-nav mr-auto">
       {%- for href, id, caption, is_shown_to_logged_in, is_shown_to_logged_out, is_shown_to_admin in left_navigation_bar %}
       {%- if (g.user and is_shown_to_logged_in) or (g.user and g.user['is_admin'] and is_shown_to_admin) or (not g.user and is_shown_to_logged_out) %}
-      <li class="nav-item{% if id == active_page %} active{% endif%}"><a class="nav-link" href="{{ href|e }}">{{ caption|e }}</a></li>
+      <li class="nav-item{% if id == active_page %} active{% endif %}"><a class="nav-link" href="{{ href|e }}">{{ caption|e }}</a></li>
       {%- endif %}
       {%- endfor %}
     </ul>
@@ -25,7 +25,7 @@
     <ul class="navbar-nav ml-auto">
       {%- for href, id, caption, is_shown_to_logged_in, is_shown_to_logged_out, is_shown_to_admin in right_navigation_bar %}
       {%- if (g.user and is_shown_to_logged_in) or (g.user and g.user['is_admin'] and is_shown_to_admin) or (not g.user and is_shown_to_logged_out) %}
-      <li class="nav-item{% if id == active_page %} active{% endif%}"><a class="nav-link" href="{{ href|e }}">{{ caption|e }}</a></li>
+      <li class="nav-item{% if id == active_page %} active{% endif %}"><a class="nav-link" href="{{ href|e }}">{{ caption|e }}</a></li>
       {%- endif %}
       {%- endfor %}
     </ul> 
