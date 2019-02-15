@@ -37,12 +37,14 @@ CREATE TABLE reservation (
   name TEXT,
   arrival TEXT NOT NULL,
   departure TEXT NOT NULL,
-  reservation_status_id INTEGER NOT NULL,
-  FOREIGN KEY (reservation_status_id) REFERENCES reservation_status (id)
+  status_id INTEGER NOT NULL,
+  created TEXT NOT NULL,
+  FOREIGN KEY (status_id) REFERENCES reservation_status (id)
 );
 
 INSERT INTO reservation_status (id, status)
 VALUES 
-  (1, "active"),
+  (1, "approved"),
   (2, "pending approval"),
-  (3, "deleted");
+  (3, "denied"),
+  (4, "canceled");

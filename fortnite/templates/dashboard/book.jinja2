@@ -39,7 +39,7 @@
     startDate: Date.now(),
     filter: function(date, view) {
       for (i in blackout_dates) {
-        if (date.getTime() === blackout_dates[i].getTime() && view ==='day') {
+        if (date.getTime() === blackout_dates[i].getTime() && view === 'day') {
           return false;
         }
       }
@@ -50,10 +50,10 @@
   arrival_picker = $('[data-toggle="arrival-date"]').datepicker();
   departure_picker = $('[data-toggle="departure-date"]').datepicker();
 
-  arrival_picker.on('pick.datepicker', function (e) {
-    minimum_departure = new Date();
-    minimum_departure.setDate(e.date.getDate() + 1);
-    departure_picker.datepicker('setStartDate', minimum_departure);
-  });
+  // arrival_picker.on('pick.datepicker', function (e) {
+  //  minimum_departure = new Date();
+  //  minimum_departure.setDate(e.date.getDate() + 1);
+  //  departure_picker.datepicker('setStartDate', minimum_departure);
+  //});
   </script>
 {% endblock %}

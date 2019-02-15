@@ -54,4 +54,9 @@ def create_app(test_config=None):
     def hello():
         return "Hello"
 
+    @app.route("/nadia")
+    @login.login_required
+    def nadia():
+        return "Hello nadia"
+
     return app

@@ -19,7 +19,7 @@ def get_booked_dates(db):
         departure_date = datetime.strptime(reservation["departure"], "%Y-%m-%d").date()
         delta = departure_date - arrival_date
         for i in range(delta.days + 1):
-            booked_dates.append(arrival_date + timedelta(i)) 
+            booked_dates.append(arrival_date + timedelta(i))
     js_fixed_dates = []
     for booked_date in booked_dates:
         year = booked_date.year
@@ -62,9 +62,9 @@ def book():
             cursor = db.cursor()
             cursor.execute(
                 "INSERT INTO reservation"
-                " (user_id, name, arrival, departure, reservation_status_id)"
+                " (user_id, name, arrival, departure, status_id, created)"
                 "VALUES"
-                " (?, ?, ?, ?, ?)",
+                " (?, ?, ?, ?, ?, DATETIME('now'))",
                 (
                     g.user["id"],
                     reservation_name,
@@ -88,14 +88,51 @@ def book():
 
     return render_template("dashboard/book.jinja2", booked_dates=booked_dates)
 
+
 @bp.route("/reservations", methods=("GET", "POST"))
 @login_required
 def reservations():
     db = get_db()
-    reservations = db.execute(
-        'SELECT * FROM reservation WHERE date(arrival) >= DATE("now");'
+    results = db.execute(
+        "SELECT reservation.*, "
+        "CASE WHEN reservation_status.status = 'canceled' THEN 'Canceled' "
+        "WHEN reservation_status.status = 'denied' THEN 'Denied' "
+        "WHEN reservation_status.status = 'pending approval' THEN 'Pending Approval' "
+        "WHEN reservation_status.status = 'approved' AND DATE(arrival) <= DATE('now') "
+        " AND DATE(departure) >= DATE('now') THEN 'Active' "
+        "WHEN reservation_status.status = 'approved' AND DATE(departure) < DATE('now') THEN 'Past' "
+        "WHEN reservation_status.status = 'approved' AND DATE(arrival) > DATE('now') THEN 'Upcoming' "
+        "ELSE NULL END status_string,"
+        "CASE WHEN reservation_status.status = 'canceled' OR DATE(arrival) < DATE('now') THEN 0 "
+        "ELSE 1 END is_cancelable "
+        "FROM reservation "
+        "LEFT JOIN reservation_status ON reservation.status_id = reservation_status.id "
+        "ORDER BY DATETIME(reservation.created) DESC "
     ).fetchall()
+    reservations = []
+    for result in results:
+        reservation = {}
+        # Create reservation name string
+        arrival = datetime.strptime(result["arrival"], "%Y-%m-%d")
+        departure = datetime.strptime(result["departure"], "%Y-%m-%d")
+        arrival_str = arrival.strftime("%a %-m/%e/%Y")
+        departure_str = departure.strftime("%a %-m/%-e/%Y")
+        reservation_str = f"{arrival_str} - {departure_str}"
+        if result['name']:
+            reservation_str += f" ({result['name']})"
+        reservation["reservation"] = reservation_str
+        # Calculate duration of stay
+        tdelta = departure - arrival
+        reservation["nights"] = tdelta.days
+        # Reservation status
+        reservation["status"] = result["status_string"]
+        # Is cancelable
+        reservation["is_cancelable"] = result["is_cancelable"] 
+        
+        reservations.append(reservation)
+ 
     return render_template("dashboard/reservations.jinja2", reservations=reservations)
+
 
 @bp.route("/book/success")
 @login_required

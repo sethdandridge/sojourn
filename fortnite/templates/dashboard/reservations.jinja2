@@ -6,8 +6,24 @@
 {% endblock %}
 
 {% block content %}
-  {% print(reservations[0].keys()) %}<br />
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Status</th>
+      <th scope="col">Reservation</th>
+      <th scope="col">Nights</th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
   {% for reservation in reservations %}
-    {{ reservation['id']}}, {{ reservation['user_id']}}, {{ reservation['name'] }}, {{ reservation['arrival'] }}, {{ reservation['departure'] }} <br/>
+    <tr>
+      <td>{{reservation['status']}}</td>
+      <td>{{reservation['reservation']}}</td>
+      <td>{{reservation['nights']}}</td>
+      <td>{% if reservation['is_cancelable'] %}Cancel{% endif %}</td>
+    </tr> 
   {% endfor %}
+  </tbody>
+</table>
 {% endblock %}
