@@ -33,4 +33,4 @@ def test_login_required(client, auth):
 
     auth.login()
     response = client.get("/")
-    #assert b"Log Out" in response.data
+    assert b"Log Out" in response.data
