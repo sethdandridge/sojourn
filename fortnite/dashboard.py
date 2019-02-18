@@ -117,7 +117,9 @@ def reservations():
         "ELSE 1 END is_cancelable "
         "FROM reservation "
         "LEFT JOIN reservation_status ON reservation.status_id = reservation_status.id "
-        "ORDER BY DATETIME(reservation.created) DESC "
+        "WHERE reservation.user_id = ? "
+        "ORDER BY DATETIME(reservation.created) DESC ",
+        (g.user['id'],),
     ).fetchall()
     reservations = []
     for result in results:
@@ -150,11 +152,20 @@ def reservations():
 def reservation(reservation_id):
     # NEEDS AUTH!!!!!!
     db = get_db()
-    cursor = db.cursor()
-    sql = "UPDATE reservation SET status_id = 4 WHERE id=?" 
-    cursor.execute(sql, (reservation_id,))
+    # check to make sure user owns reservation
+    reservation = db.execute(
+        "SELECT * FROM reservation "
+        "WHERE id = ?;",
+        (reservation_id,)
+    ).fetchone()
+    if reservation["user_id"] != g.user['id']:
+        abort(401)
+    # success, update reservation
+    db.execute(
+        "UPDATE reservation SET status_id = 4 WHERE id=?; ",
+        (reservation_id,)
+    )
     db.commit()
-    cur.close()
     return 'success'
 
 @bp.route("/cancellation_success")
