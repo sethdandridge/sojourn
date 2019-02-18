@@ -61,10 +61,10 @@ def book():
             db = get_db()
             cursor = db.cursor()
             cursor.execute(
-                "INSERT INTO reservation"
-                " (user_id, name, arrival, departure, status_id, created)"
-                "VALUES"
-                " (?, ?, ?, ?, ?, DATETIME('now'))",
+                "INSERT INTO reservation "
+                "(user_id, name, arrival, departure, status_id, created) "
+                "VALUES "
+                "(?, ?, ?, ?, ?, DATETIME('now')) ",
                 (
                     g.user["id"],
                     reservation_name,
@@ -137,4 +137,6 @@ def reservations():
 @bp.route("/book/success")
 @login_required
 def book_success():
-    return "Congrats on booking your vacation! You will receive an email confirmation when you're approved."
+    #return "Congrats on booking your vacation! You will receive an email confirmation when you're approved."
+    # check if user can access other users's confirmations
+    return render_template("dashboard/book_success.jinja2")

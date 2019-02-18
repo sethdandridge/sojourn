@@ -1,0 +1,11 @@
+{% extends 'base.jinja2' %}
+{% set active_page = "dashboard book_success" %}
+
+{% block header %}
+  <h1>{% block title %}Success!{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+<p>Congrats on booking your reservation! You will receive an email confirmation when you're approved.</p>
+<p>Go to <a href="{{url_for('dashboard.reservations')}}">Reservations</a> to see all of your upcoming reservations or <a href="{{url_for('dashboard.book')}}">Book Another Reservation</a>.</p>
+{% endblock %}
