@@ -21,9 +21,20 @@
       <td>{{reservation['status']}}</td>
       <td>{{reservation['reservation']}}</td>
       <td>{{reservation['nights']}}</td>
-      <td>{% if reservation['is_cancelable'] %}Cancel{% endif %}</td>
+      <td>{% if reservation['is_cancelable'] %}<a href="" onclick="return cancel({{reservation['id']}});">Cancel</a>{% endif %}</td>
     </tr> 
   {% endfor %}
   </tbody>
 </table>
+<script>
+function cancel(id) {
+  if (confirm("Are you sure you want to delete this reservation? Click OK to delete.")) {
+    var oReq = new XMLHttpRequest();
+    oReq.addEventListener("load", function() {window.location = "/cancellation_success";} );
+    oReq.open("DELETE", "/reservation/" + id);
+    oReq.send();
+  }
+  return false;
+}
+</script>
 {% endblock %}

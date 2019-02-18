@@ -11,7 +11,9 @@ bp = Blueprint("dashboard", __name__)
 
 def get_booked_dates(db):
     reservations = db.execute(
-        'SELECT * FROM reservation WHERE date(arrival) >= DATE("now");'
+        "SELECT * FROM reservation "
+        "WHERE date(arrival) >= DATE('now') "
+        "AND status_id != 4; "
     ).fetchall()
     booked_dates = []
     for reservation in reservations:
@@ -89,7 +91,15 @@ def book():
     return render_template("dashboard/book.jinja2", booked_dates=booked_dates)
 
 
-@bp.route("/reservations", methods=("GET", "POST"))
+@bp.route("/book/success")
+@login_required
+def book_success():
+    #return "Congrats on booking your vacation! You will receive an email confirmation when you're approved."
+    # check if user can access other users's confirmations
+    return render_template("dashboard/book_success.jinja2")
+
+
+@bp.route("/reservations")
 @login_required
 def reservations():
     db = get_db()
@@ -115,7 +125,7 @@ def reservations():
         # Create reservation name string
         arrival = datetime.strptime(result["arrival"], "%Y-%m-%d")
         departure = datetime.strptime(result["departure"], "%Y-%m-%d")
-        arrival_str = arrival.strftime("%a %-m/%e/%Y")
+        arrival_str = arrival.strftime("%a %-m/%-e/%Y")
         departure_str = departure.strftime("%a %-m/%-e/%Y")
         reservation_str = f"{arrival_str} - {departure_str}"
         if result['name']:
@@ -127,16 +137,27 @@ def reservations():
         # Reservation status
         reservation["status"] = result["status_string"]
         # Is cancelable
-        reservation["is_cancelable"] = result["is_cancelable"] 
+        reservation["is_cancelable"] = result["is_cancelable"]
+        # id 
+        reservation["id"] = result["id"] 
         
         reservations.append(reservation)
  
     return render_template("dashboard/reservations.jinja2", reservations=reservations)
 
-
-@bp.route("/book/success")
+@bp.route("/reservation/<int:reservation_id>", methods=('DELETE',))
 @login_required
-def book_success():
-    #return "Congrats on booking your vacation! You will receive an email confirmation when you're approved."
-    # check if user can access other users's confirmations
-    return render_template("dashboard/book_success.jinja2")
+def reservation(reservation_id):
+    # NEEDS AUTH!!!!!!
+    db = get_db()
+    cursor = db.cursor()
+    sql = "UPDATE reservation SET status_id = 4 WHERE id=?" 
+    cursor.execute(sql, (reservation_id,))
+    db.commit()
+    cur.close()
+    return 'success'
+
+@bp.route("/cancellation_success")
+@login_required
+def cancellation_success(): 
+    return render_template("dashboard/cancellation_success.jinja2")
