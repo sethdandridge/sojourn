@@ -1,0 +1,16 @@
+{% extends 'base.jinja2' %}
+{% set active_page = "dashboard create property" %}
+
+{% block header %}
+<!--  <div class="form-header"><h1>{% block title %}Create Property{% endblock %}</h1></div> -->
+{% endblock %}
+
+{% block content %}
+  <form method="post" class="register-form">
+    <div class="form-group">
+      <label for="name">Name of Property</label>
+      <input name="name" id="name" class="form-control" required />
+    </div>
+    <button type="submit" class="btn btn-primary">Create Property</button>
+  </form>
+{% endblock %}

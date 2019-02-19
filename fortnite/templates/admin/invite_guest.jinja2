@@ -1,0 +1,25 @@
+{% extends 'base.jinja2' %}
+{% set active_page = "admin invite_guest" %}
+
+{% block header %}
+  <div class="form-header"><h1>{% block title %}Invite New Guest{% endblock %}</h1></div>
+{% endblock %}
+
+{% block content %}
+  <form method="post" class="register-form">
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input name="email" id="email" type="email" class="form-control" />
+    </div>
+
+    <div class="form-group">
+      <div class="form-check">
+        <input name="notify_email" type="checkbox" class="form-check-input" value="1" id="notify_email" checked /> 
+        <label for="" class="form-check-label">Send Email Notification</label>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Invite Guest</button>
+
+  </form>
+{% endblock %}

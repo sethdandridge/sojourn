@@ -15,15 +15,48 @@
   </button>
   <div class="collapse navbar-collapse" id="navbar-left">
     <ul class="navbar-nav mr-auto">
+    {% if g.property %}
       {%- for href, id, caption, is_shown_to_logged_in, is_shown_to_logged_out, is_shown_to_admin in left_navigation_bar %}
       {%- if (g.user and is_shown_to_logged_in) or (g.user and g.user['is_admin'] and is_shown_to_admin) or (not g.user and is_shown_to_logged_out) %}
       <li class="nav-item{% if id == active_page %} active{% endif %}"><a class="nav-link" href="{{ href|e }}">{{ caption|e }}</a></li>
       {%- endif %}
       {%- endfor %}
+      {% if g.property['is_admin'] %}
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Owner Tools
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="{{url_for('admin.guests')}}">Manage Guests</a>
+          <a class="dropdown-item" href="#">Calendar</a>
+          <a class="dropdown-item" href="#">Property Settings</a>
+        </div>
+      </li>
+      {% endif %}
+    {% endif %}
     </ul>
   </div>
   <div class="navbar-collapse collapse order-1 dual-collapse2" id="navbar-right">
     <ul class="navbar-nav ml-auto">
+      {% if g.user and not g.properties %}
+      <li class="nav-item"><a class="nav-link" href="{{ url_for('dashboard.create_property') }}">Create New Property</a></li>
+      {% elif g.user and g.properties %}
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          {{ g.property['name'] }}
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+        {% for property in g.properties if property['id'] != g.property['id']%} 
+          <a class="dropdown-item" href="{{ url_for('dashboard.switch_property', property_id=property['id']) }}">{{ property.name }}</a> 
+        {% endfor %}
+        {% if g.properties|length > 1 %}
+          <div class="dropdown-divider"></div>
+        {% endif %}
+          <a class="dropdown-item" href="{{ url_for('dashboard.create_property') }}">Create New Property</a>
+        </div>
+      </li>
+      {% endif %}
+      
       {%- for href, id, caption, is_shown_to_logged_in, is_shown_to_logged_out, is_shown_to_admin in right_navigation_bar %}
       {%- if (g.user and is_shown_to_logged_in) or (g.user and g.user['is_admin'] and is_shown_to_admin) or (not g.user and is_shown_to_logged_out) %}
       <li class="nav-item{% if id == active_page %} active{% endif %}"><a class="nav-link" href="{{ href|e }}">{{ caption|e }}</a></li>

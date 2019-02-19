@@ -3,10 +3,10 @@ from flask import g, session
 from fortnite.db import get_db
 import datetime
 
+
 def test_book(app, client, auth):
     auth.login()
     assert client.get('/book').status_code == 200
-
     arrival = datetime.date.today() + datetime.timedelta(days=1)
     departure = datetime.date.today() + datetime.timedelta(days=5)
     arrival = arrival.strftime("%Y-%m-%d")
@@ -28,12 +28,14 @@ def test_book(app, client, auth):
             is not None
         )
 
-    from fortnite.dashboard import get_booked_dates
+    from fortnite.dashboard.book import get_booked_dates
     booked_night = datetime.date.today() + datetime.timedelta(days=2)
-    with app.app_context():
+    #with app.app_context():
+    with app.test_request_context():
+        print(g.user.keys())
         booked_dates = get_booked_dates(get_db())
         print(booked_dates)
-        assert f"{booked_night.year}, {booked_night.month - 1}, {booked_night.day}" in booked_dates
+    assert f"{booked_night.year}, {booked_night.month - 1}, {booked_night.day}" in booked_dates
 
 
 arrival = datetime.date.today() + datetime.timedelta(days=6)
@@ -92,4 +94,7 @@ def test_reservations(app, auth, client):
     response = client.get('/reservations')
     assert b"Mishka's Birthday" in response.data
 
-    
+def test_book_success(client, auth):
+    auth.login()
+    response = client.get("/book/success")
+    assert b"Congrats" in response.data    

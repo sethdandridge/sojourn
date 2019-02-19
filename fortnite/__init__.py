@@ -26,36 +26,25 @@ def create_app(test_config=None):
         pass
 
     from . import db
-
     db.init_app(app)
 
     from . import register
-
     app.register_blueprint(register.bp)
 
     from . import login
-
     app.register_blueprint(login.bp)
 
     from . import logout
-
     app.register_blueprint(logout.bp)
 
     from . import dashboard
-
     app.register_blueprint(dashboard.bp)
     app.add_url_rule("/", endpoint="index")
 
     from . import admin
-
-    app.register_blueprint(admin.bp)
-
-    @app.route("/hello")
-    def hello():
-        return "Hello"
+    app.register_blueprint(admin.bp, url_prefix="/admin")
 
     @app.route("/nadia")
-    @login.login_required
     def nadia():
         return "Hello nadia"
 
