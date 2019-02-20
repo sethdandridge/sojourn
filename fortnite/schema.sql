@@ -70,7 +70,7 @@ CREATE TABLE invite_reservation_limits (
   max_days_in_advance INTEGER,
   min_days_between INTEGER,
   is_owner_presence_required INTEGER NOT NULL,
-  is_owner_confirmation_requred INTEGER NOT NULL,
+  is_owner_confirmation_required INTEGER NOT NULL,
   FOREIGN KEY (invite_id) REFERENCES invite (id),
   FOREIGN KEY (property_id) REFERENCES property (id)
 );

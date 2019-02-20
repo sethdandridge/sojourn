@@ -75,6 +75,15 @@ def invite_guest():
     db = get_db()
     if request.method == "POST":
         email = request.form.get('email')
+        max_upcoming = request.form.get('max_upcoming') 
+        max_duration = request.form.get('max_duration')
+        max_per_month = request.form.get('max_per_month')
+        max_per_year = request.form.get('max_per_year')
+        max_days_in_advance = request.form.get('max_days_in_advance')
+        min_days_between = request.form.get('min_days_between')
+        is_owner_presence_required = request.form.get('is_owner_presence_required')
+        is_owner_confirmation_required = request.form.get('is_owner_confirmation_required')
+
 
         error = None
         if not email:
@@ -125,7 +134,7 @@ def invite_guest():
 
             db.commit()
 
-            flash(f"Invited {email}")
+            flash(f"Invited {email}" + str(request.form))
             return redirect(url_for('admin.guests'))
 
     return render_template("admin/invite_guest.jinja2")
@@ -168,11 +177,11 @@ def remove_guest(guest_id):
         )
         db.commit()
 
-        # user is deleting themself
+        # user is deleting themselves
         if g.user['id'] == guest_id:
             return redirect(url_for('dashboard.index'))
-        else:
-            return redirect(url_for('admin.guests'))
+        
+        return redirect(url_for('admin.guests'))
 
     guest = db.execute(
         "SELECT * FROM user "

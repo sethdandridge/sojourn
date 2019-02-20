@@ -8,18 +8,164 @@
 {% block content %}
   <form method="post" class="register-form">
     <div class="form-group">
-      <label for="email">Email</label>
-      <input name="email" id="email" type="email" class="form-control" />
+      <div class="form-row">
+        <label for="email">Email</label>
+      </div>
+      <div class="form-row">
+        <div class="col">
+          <input name="email" id="email" type="email" class="form-control" />
+        </div>
+      </div>
     </div>
 
     <div class="form-group">
       <div class="form-check">
-        <input name="notify_email" type="checkbox" class="form-check-input" value="1" id="notify_email" checked /> 
+        <input name="notify_email" type="checkbox" class="form-check-input" value="1" id="notify_email" />
         <label for="" class="form-check-label">Send Email Notification</label>
       </div>
     </div>
+ 
+    
+    <div class="form-row">
+      <label>Guest Limits</label>
+    </div>
+   
+ 
+    <div class="form-group">
+      <div class="form-row align-items-center">
+        <div class="col-9">
+          <div class="form-check">
+            <input class="form-check-input input-toggler" type="checkbox" id="max_upcoming_enabled" data-toggles="max_upcoming" value="max_upcoming_enabled" name="max_upcoming_enabled">
+            <label for="max_upcoming">Max Upcoming Trips</label> 
+          </div>
+        </div> 
+        <div class="col-3">
+          <input name="max_upcoming" id="max_upcoming" type="" class="form-control" disabled/>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group"> 
+      <div class="form-row align-items-center">
+        <div class="col-9">
+          <div class="form-check">
+            <input class="form-check-input input-toggler" type="checkbox" id="max_duration_enabled" data-toggles="max_duration" value="max_duration_enabled" name="max_duration_enabled">
+            <label for="max_duration">Max Stay Duration</label>
+          </div>
+        </div>
+        <div class="col-3">
+          <input name="max_duration" id="max_duration" type="" class="form-control" disabled/>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="form-row align-items-center">
+        <div class="col-9">
+          <div class="form-check">
+            <input class="form-check-input input-toggler" type="checkbox" id="max_per_month_enabled" data-toggles="max_per_month" value="max_per_month_enabled" name="max_per_month_enabled">
+            <label for="max_per_month">Max Stays Per Month</label>
+          </div>
+        </div>
+        <div class="col-3">
+          <input name="max_per_month" id="max_per_month" type="" class="form-control" disabled/>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="form-row align-items-center">
+        <div class="col-9">
+          <div class="form-check">
+            <input class="form-check-input input-toggler" type="checkbox" id="max_per_year_enabled" data-toggles="max_per_year" value="max_per_year_enabled" name="max_per_year_enabled">
+             <label for="max_per_year">Max Stays Per Year</label>
+          </div>
+        </div>
+        <div class="col-3">
+          <input name="max_per_year" id="max_per_year" type="" class="form-control" disabled/>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="form-row align-items-center">
+        <div class="col-9">
+          <div class="form-check">
+            <input class="form-check-input input-toggler" type="checkbox" id="max_days_in_advance_enabled" data-toggles="max_days_in_advance" value="max_days_in_advance_enabled" name="max_days_in_advance_enabled">
+            <label for="max_days_in_advance">Max Days In Advance</label>
+          </div>
+        </div>
+        <div class="col-3">
+          <input name="max_days_in_advance" id="max_days_in_advance" type="" class="form-control" disabled/>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="form-row align-items-center">
+        <div class="col-9">
+          <div class="form-check">
+            <input class="form-check-input input-toggler" type="checkbox" id="min_days_between_enabled" data-toggles="min_days_between" value="min_days_between_enabled" name="min_days_in_advance_enabled">
+            <label for="min_days_between">Min Nights Between Stays</label>
+          </div>
+        </div>
+        <div class="col-3">
+          <input name="min_days_between" id="min_days_between" type="" class="form-control" disabled/>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="form-row align-items-center">
+        <div class="col-12">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="is_owner_presence_required_enabled" value="is_owner_presence_required_enabled" name="is_owner_presence_required_enabled">
+            <label for="is_owner_presence_required_enabled">Owner Presence Required</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="form-row align-items-center">
+        <div class="col-12">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="is_owner_confirmation_required_enabled" value="is_owner_confirmation_required_enabled" name="is_owner_confirmation_required_enabled">
+            <label for="is_owner_confirmation_required_enabled">Owner Must Confirm Reservations</label>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- <div class="form-group">
+      <label for="">Max Upcoming Trips</label>
+      <label for="">Max Stay Duration</label>
+      <label for="">Max Stays Per Month</label>
+      <label for="">Max Stays Per Year</label>
+      <label for="">Max Days In Advance</label>
+      <label for="">Minimum Nights Between Stays</label>
+      <label for="">Owner Presence Required</label>
+      <label for="">Owner Confirmation Required</label>
+    </div> -->
 
     <button type="submit" class="btn btn-primary">Invite Guest</button>
 
   </form>
+<script>
+$( ".input-toggler" ).each(function(index, element) {
+  $(element).change(function() {
+    if($(this).is(':checked')) {
+      document.getElementById($(element).attr("data-toggles")).disabled = false;
+    } else {
+      document.getElementById($(element).attr("data-toggles")).disabled = true;
+    }
+  });
+});
+</script>
+
+
+
+
+
+
 {% endblock %}
