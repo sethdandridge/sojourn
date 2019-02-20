@@ -1,0 +1,29 @@
+{% extends 'base.jinja2' %}
+{% set active_page = "admin invites" %}
+
+{% block header %}
+  <h1>{% block title %}Manage Invites{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+{% if not invites %}
+<p>You have no outstanding invitations. <a href="{{url_for('admin.invite_guest')}}">Click here to invite a new guest.</a></p>
+{% else %}
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Email</th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for invite in invites %}
+    <tr>
+      <td>{{invite['email']}}</td>
+      <td><a href="{{url_for('admin.edit_guest', guest_id=1)}}">Cancel</a></td>
+    </tr> 
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+{% endblock %}

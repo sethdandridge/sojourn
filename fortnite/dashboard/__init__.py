@@ -22,7 +22,7 @@ def load_user_properties():
     if g.user:
         db = get_db()
         g.properties = db.execute(
-            "SELECT property.* FROM user_to_property "
+            "SELECT property.*, user_to_property.is_admin FROM user_to_property "
             "JOIN property ON property.id = user_to_property.property_id "
             "WHERE user_to_property.user_id = ?; ",
             (g.user['id'],)).fetchall()

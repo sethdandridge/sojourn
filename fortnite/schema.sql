@@ -1,6 +1,6 @@
 DROP TABLE IF EXISTS user;
-DROP TABLE IF EXISTS property;
 DROP TABLE IF EXISTS property_status;
+DROP TABLE IF EXISTS property;
 DROP TABLE IF EXISTS user_to_property;
 DROP TABLE IF EXISTS user_to_property_reservation_limits;
 DROP TABLE IF EXISTS invite;

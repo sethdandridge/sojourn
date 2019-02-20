@@ -9,7 +9,7 @@ from . import bp
 @login_required
 def switch_property(property_id):
     db = get_db()
-    # double check to make sure user has access to property (g.property logic does this as well)
+    # this double checks to make sure user has access to property (g.property logic does this as well)
     results = db.execute(
         "SELECT * FROM user_to_property "
         "WHERE property_id = ? AND user_id = ?;",

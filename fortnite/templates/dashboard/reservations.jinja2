@@ -28,7 +28,7 @@
   </tbody>
 </table>
 {% else %}
-<p>You have no existing reservations. <a href="{{url_for('dashboard.reservations')}}">Click here to book a reservation.</a>
+<p>You have no existing reservations. <a href="{{url_for('dashboard.book')}}">Click here to book a reservation.</a>
 {% endif %}
 <script>
 function cancel(id) {

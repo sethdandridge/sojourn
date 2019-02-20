@@ -33,9 +33,9 @@ def edit_guest(guest_id):
             error = "You cannot edit yourself."
 
         if is_admin_input == '1':
-            is_admin = 1
+            is_admin = True
         else:
-            is_admin = 0
+            is_admin = False
 
         if error:
             flash(error)
@@ -120,7 +120,7 @@ def invite_guest():
                     "(email, property_id) "
                     "VALUES "
                     "(?, ?); ",
-                    (user['id'], g.property['id'],)
+                    (email, g.property['id'],)
                 )
 
             db.commit()
@@ -129,3 +129,57 @@ def invite_guest():
             return redirect(url_for('admin.guests'))
 
     return render_template("admin/invite_guest.jinja2")
+
+@bp.route("/guests/invites", methods=("GET", "POST"))
+@login_required
+@admin_required
+def invites():
+    db = get_db()
+    invites = db.execute(
+        "SELECT * FROM invite "
+        "WHERE invite.property_id = ?; ",
+        (g.property['id'],)
+    ).fetchall()
+    return render_template('admin/invites.jinja2', invites=invites)
+
+
+@bp.route("/guests/remove/<int:guest_id>", methods=("GET", "POST"))
+@login_required
+@admin_required
+def remove_guest(guest_id):
+    db = get_db()
+    if request.method == "POST":
+
+        db.execute(
+            "UPDATE reservation "
+            "SET status_id = 4 "
+            "WHERE user_id = ? "
+            "AND property_id = ? "
+            "AND departure >= DATE('now'); ",
+            (guest_id, g.property['id'],),
+        )
+        db.commit()
+
+        db.execute(
+            "DELETE FROM user_to_property "
+            "WHERE user_id = ? "
+            "AND property_id = ?; ",
+            (guest_id, g.property['id'],),
+        )
+        db.commit()
+
+        # user is deleting themself
+        if g.user['id'] == guest_id:
+            return redirect(url_for('dashboard.index'))
+        else:
+            return redirect(url_for('admin.guests'))
+
+    guest = db.execute(
+        "SELECT * FROM user "
+        "JOIN user_to_property ON user_to_property.user_id = user.id "
+        "WHERE user_to_property.property_id = ? "
+        "AND user.id = ? ",
+        (g.property['id'], guest_id,),
+    ).fetchone()
+    return render_template('admin/remove_guest.jinja2', guest=guest)
+    

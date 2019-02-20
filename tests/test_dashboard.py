@@ -1,8 +1,8 @@
 import pytest
 from flask import g, session
 from fortnite.db import get_db
+from fortnite.dashboard.book import get_booked_dates
 import datetime
-
 
 def test_book(app, client, auth):
     auth.login()
@@ -28,12 +28,25 @@ def test_book(app, client, auth):
             is not None
         )
 
-    from fortnite.dashboard.book import get_booked_dates
+def test_booked_dates(app, client, auth):
+    arrival = datetime.date.today() + datetime.timedelta(days=1)
+    departure = datetime.date.today() + datetime.timedelta(days=5)
+    arrival = arrival.strftime("%Y-%m-%d")
+    departure = departure.strftime("%Y-%m-%d")
     booked_night = datetime.date.today() + datetime.timedelta(days=2)
-    #with app.app_context():
     with app.test_request_context():
-        print(g.user.keys())
-        booked_dates = get_booked_dates(get_db())
+        auth.login()
+        client.get('/book')
+        client.post(
+            "/book",
+            data={
+                "arrival_date": arrival,
+                "departure_date": departure,
+                "name": "Mishka's Birthday"
+            },
+        )
+        db = get_db()
+        booked_dates = get_booked_dates(db)
         print(booked_dates)
     assert f"{booked_night.year}, {booked_night.month - 1}, {booked_night.day}" in booked_dates
 

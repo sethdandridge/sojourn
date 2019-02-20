@@ -6,7 +6,9 @@
 {% endblock %}
 
 {% block content %}
-<p><a href="{{url_for('admin.invite_guest')}}">Invite new guest</a></p>
+<p><a href="{{url_for('admin.invite_guest')}}">Invite new guest</a><br />
+<a href="{{url_for('admin.invites')}}">Manage pending invitations</a></p>
+{% if guests|length > 1 %}
 <table class="table">
   <thead>
     <tr>
@@ -17,7 +19,7 @@
     </tr>
   </thead>
   <tbody>
-  {% for guest in guests %}
+  {% for guest in guests if guest['id'] != g.property['owner_user_id'] %}
     <tr>
       <td>{{guest['first_name'] + " " + guest['last_name']}}{% if guest['is_admin'] %} (Admin){% endif %}</td>
       <td>{{guest['email']}}</td>
@@ -27,4 +29,5 @@
   {% endfor %}
   </tbody>
 </table>
+{% endif %}
 {% endblock %}
