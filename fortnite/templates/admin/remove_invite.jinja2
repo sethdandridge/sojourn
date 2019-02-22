@@ -1,0 +1,18 @@
+{% extends 'base.jinja2' %}
+{% set active_page = "admin remove_invite" %}
+
+{% block header %}
+  <!-- <div class="form-header"><h1>{% block title %}Remove Invite{% endblock %}</h1></div> -->
+{% endblock %}
+
+{% block content %}
+<center>
+  <form method="post">
+  <p>Are you sure you want to revoke {{invite['email']}}'s invitation?</p>
+    <button type="submit" class="btn btn-danger">Remove Invite</button>
+    <a href="{{url_for('admin.invites')}}">
+      <button type="button" class="btn btn-secondary">Cancel</button>
+    </a> 
+  </form>
+</center>
+{% endblock %}

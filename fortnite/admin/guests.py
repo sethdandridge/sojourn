@@ -62,16 +62,68 @@ def edit_guest(guest_id):
         return redirect(url_for("admin.guests"))
 
     sql = (
-        "SELECT * FROM \"user\" "
-        "JOIN user_to_property ON user_to_property.user_id = \"user\".id "
+        'SELECT * FROM "user" '
+        'JOIN user_to_property ON user_to_property.user_id = "user".id '
         "WHERE user_to_property.property_id = %s "
-        "AND \"user\".id = %s "
+        'AND "user".id = %s '
     )
     with get_db().cursor() as cursor:
         cursor.execute(sql, (g.property["id"], guest_id))
         guest = cursor.fetchone()
 
     return render_template("admin/edit_guest.jinja2", guest=guest)
+
+
+@bp.route("/guests/remove/<int:guest_id>", methods=("GET", "POST"))
+@admin_required
+def remove_guest(guest_id):
+    if request.method == "POST":
+        error = None
+        if guest_id == g.property["owner_user_id"]:
+            error = "HEY! You are not allowed to remove the property owner's account."
+        if error:
+            flash(error)
+        else:
+            # cancel all future reservations and remove guest
+            sql_cancel_rezzies = (
+                "UPDATE reservation "
+                "SET status_id = 4 "
+                "WHERE user_id = %s "
+                "AND property_id = %s "
+                "AND departure >= NOW(); "
+            )
+            sql_remove_reservation_limits = (
+                "DELETE FROM user_to_property_reservation_limits "
+                "WHERE user_id = %s"
+                "AND property_id = %s; "
+            )
+            sql_remove_guest = (
+                "DELETE FROM user_to_property "
+                "WHERE user_id = %s "
+                "AND property_id = %s; ",
+            )
+            with get_db().cursor() as cursor:
+                cursor.execute(sql_cancel_rezzies, (guest_id, g.property["id"]))
+                cursor.execute(sql_remove_reservation_limits, (guest_id, g.property["id"]))
+                cursor.execute(sql_remove_guest, (guest_id, g.property["id"]))
+
+            # user is deleting themselves
+            if g.user["id"] == guest_id:
+                return redirect(url_for("dashboard.index"))
+
+        return redirect(url_for("admin.guests"))
+
+    sql = (
+        'SELECT * FROM "user" '
+        'JOIN user_to_property ON user_to_property.user_id = "user".id '
+        "WHERE user_to_property.property_id = %s "
+        'AND "user".id = %s; '
+    )
+    with get_db().cursor() as cursor:
+        cursor.execute(sql, (g.property["id"], guest_id))
+        guest = cursor.fetchone()
+
+    return render_template("admin/remove_guest.jinja2", guest=guest)
 
 
 def validate_reservation_limits(form):
@@ -83,23 +135,39 @@ def validate_reservation_limits(form):
     max_days_in_advance = form.get("max_days_in_advance", "").strip()
     min_days_between = form.get("min_days_between", "").strip()
 
-    if max_upcoming and not max_upcoming.isdigit():
-        errors.append("Invalid Max Upcoming Stays. Please enter a number.")
+    if max_upcoming:
+        if not max_upcoming.isdigit() or int(max_upcoming) < 0 or int(max_upcoming) > 2_147_483_647:
+            errors.append("Invalid Max Upcoming Stays. Please enter a reasonable number of stays.")
 
-    if max_duration and not max_duration.isdigit():
-        errors.append("Invalid Max Stay Duration. Please enter a number.")
+    if max_duration:
+        if not max_duration.isdigit() or int(max_duration) < 0 or int(max_duration) > 2_147_483_647:
+            errors.append(
+                "Invalid Max Stay Duration. Please enter a reasonable number of days."
+            )
 
-    if max_per_month and not max_per_month.isdigit():
-        errors.append("Invalid Max Stays Per Month. Please enter a number.")
+    if max_per_month:
+        if not max_per_month.isdigit() or int(max_per_month) < 0 or int(max_per_month) > 2_147_483_647:
+            errors.append(           
+                "Invalid Max Stays Per Month. Please enter a reasonable number of stays."
+            )
 
-    if max_per_year and not max_per_year.isdigit():
-        errors.append("Invalid Max Stays Per Year. Please enter a number.")
+    if max_per_year:
+        if not max_per_year.isdigit() or int(max_per_year) < 0 or int(max_per_year) > 2_147_483_647:
+            errors.append(
+                "Invalid Max Stays Per Year. Please enter a reasonable number of stays."
+            )
 
-    if max_days_in_advance and not max_days_in_advance.isdigit():
-        errors.append("Invalid Max Days In Advance. Please enter a number.")
+    if max_days_in_advance:
+        if not max_days_in_advance.isdigit() or int(max_days_in_advance) < 0 or int(max_days_in_advance) > 2_147_483_647:
+            errors.append(
+                "Invalid Max Days In Advance. Please enter a reasonable number of days."
+            )
 
-    if min_days_between and not min_days_between.isdigit():
-        errors.append("Invalid Min Nights Between Stays. Please enter a number.")
+    if min_days_between:
+        if not min_days_between.isdigit() or int(min_days_between) < 0 or int(min_days_between) > 2_147_483_647:
+            errors.append(
+                "Invalid Minimum Nights Between Stays. Please enter a reasonable number of days."
+            )
 
     return errors
 
@@ -265,47 +333,110 @@ def invites():
     return render_template("admin/invites.jinja2", invites=invites)
 
 
-@bp.route("/guests/remove/<int:guest_id>", methods=("GET", "POST"))
+@bp.route("/guests/invites/edit/<int:invite_id>", methods=("GET", "POST"))
 @admin_required
-def remove_guest(guest_id):
+def edit_invite(invite_id):
     if request.method == "POST":
-        error = None
-        if guest_id == g.property["owner_user_id"]:
-            error = "HEY! You are not allowed to remove the property owner's account."
-        if error:
-            flash(error)
+
+        # Find any errors or auth issues
+        errors = validate_reservation_limits(request.form)
+        sql = "SELECT * FROM invite WHERE invite.id = %s;"
+        with get_db().cursor() as cursor:
+            cursor.execute(sql, (invite_id,))
+            invite = cursor.fetchone()
+        if not invite:
+            errors.append("This invite does not exist.")
+        elif invite["property_id"] != invite["property_id"]:
+            errors.append("You do not have permission to edit this invite.")
+        if errors:
+            for error in errors:
+                flash(error)
         else:
-            # cancel all future reservations and remove guest
-            sql_cancel_rezzies = (
-                "UPDATE reservation "
-                "SET status_id = 4 "
-                "WHERE user_id = %s "
-                "AND property_id = %s "
-                "AND departure >= NOW(); "
-            )
-            sql_remove_guest = (
-                "DELETE FROM user_to_property "
-                "WHERE user_id = %s "
-                "AND property_id = %s; ",
+            # I guess we're okay? This is getting complicated.
+            reservation_limits = normalize_reservation_limits(request.form)
+            sql = (
+                "UPDATE invite_reservation_limits "
+                "SET "
+                " max_upcoming = %s, "
+                " max_duration = %s, "
+                " max_per_month = %s, "
+                " max_per_year = %s, "
+                " max_days_in_advance = %s, "
+                " min_days_between = %s, "
+                " is_owner_presence_required = %s, "
+                " is_owner_confirmation_required = %s "
+                " WHERE invite_reservation_limits.invite_id = %s; "
             )
             with get_db().cursor() as cursor:
-                cursor.execute(sql_cancel_rezzies, (guest_id, g.property["id"]))
-                cursor.execute(sql_remove_guest, (guest_id, g.property["id"]))
-
-            # user is deleting themselves
-            if g.user["id"] == guest_id:
-                return redirect(url_for("dashboard.index"))
-
-        return redirect(url_for("admin.guests"))
+                cursor.execute(sql, 
+                    (
+                        reservation_limits["max_upcoming"],
+                        reservation_limits["max_duration"],
+                        reservation_limits["max_per_month"],
+                        reservation_limits["max_per_year"],
+                        reservation_limits["max_days_in_advance"],
+                        reservation_limits["min_days_between"],
+                        reservation_limits["is_owner_presence_required"],
+                        reservation_limits["is_owner_confirmation_required"],
+                        invite_id,
+                    )
+                )
+            return redirect(url_for('admin.invites'))
 
     sql = (
-        'SELECT * FROM "user" '
-        'JOIN user_to_property ON user_to_property.user_id = "user".id '
-        "WHERE user_to_property.property_id = %s "
-        'AND "user".id = %s; '
+        "SELECT * FROM invite "
+        "JOIN invite_reservation_limits ON invite_reservation_limits.invite_id = invite.id "
+        "WHERE invite.id = %s; "
     )
     with get_db().cursor() as cursor:
-        cursor.execute(sql, (g.property["id"], guest_id))
-        guest = cursor.fetchone()
+        cursor.execute(sql, (invite_id,))
+        invite = cursor.fetchone()
+    if invite:
+        return render_template("admin/edit_invite.jinja2", invite=invite)
+    else:
+        abort(404)
 
-    return render_template("admin/remove_guest.jinja2", guest=guest)
+
+@bp.route("/guests/invites/remove/<int:invite_id>", methods=("GET", "POST"))
+@admin_required
+def remove_invite(invite_id):
+
+    if request.method == "POST":
+        sql = (
+            "SELECT * FROM invite "
+            "WHERE invite.id = %s "
+            "AND invite.property_id = %s; "
+        )
+        with get_db().cursor() as cursor:
+            cursor.execute(sql, (invite_id, g.property['id']))
+            has_access = cursor.fetchone()
+
+        if not has_access:
+            abort(401)
+
+        sql_remove_invite = (
+            "DELETE FROM invite "
+            "WHERE id = %s; " 
+        )
+        sql_delete_invite_reservation_limits = (
+            "DELETE FROM invite_reservation_limits "
+            "WHERE invite_id = %s; "
+        )
+        with get_db().cursor() as cursor:
+            cursor.execute(sql_delete_invite_reservation_limits, (invite_id,))
+            cursor.execute(sql_remove_invite, (invite_id,))
+
+        return redirect(url_for('admin.invites'))
+
+    sql = (
+        "SELECT * FROM invite "
+        "WHERE invite.id = %s "
+        "AND invite.property_id = %s; "
+    )
+    with get_db().cursor() as cursor:
+        cursor.execute(sql, (invite_id, g.property['id']))
+        invite = cursor.fetchone()
+    if invite: 
+        return render_template("admin/remove_invite.jinja2", invite=invite)
+    else:
+        abort(404)

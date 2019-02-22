@@ -23,11 +23,11 @@ def login():
         email = request.form["email"]
         password = request.form["password"]
         error = None
-
-        db = get_db()
-        sql = "SELECT * FROM user WHERE email LIKE %s"
-        with db.cursor() as cursor:
-            user = cursor.execute(sql, (email,)).fetchone()
+ 
+        sql = 'SELECT * FROM "user" WHERE email LIKE %s'
+        with get_db().cursor() as cursor:
+            cursor.execute(sql, (email,))
+            user = cursor.fetchone()
 
         if user is None:
             error = "Incorrect username."
@@ -52,15 +52,12 @@ def load_logged_in_user():
         g.user = None
     else:
         sql = 'SELECT * FROM "user" WHERE id = %s'
-        db = get_db()
-        with db.cursor() as cursor:
+        with get_db().cursor() as cursor:
             cursor.execute(sql, (user_id,))
-            if cursor.rowcount > 0:
-                g.user = cursor.fetchone()
-            else:
-                # in case the user id in the session cookie no longer exists
-                session.clear()
-                g.user = None
+            g.user = cursor.fetchone() 
+        # in case the user id in the session cookie no longer exists
+        if not g.user:
+            session.clear()
 
 
 def login_required(view):

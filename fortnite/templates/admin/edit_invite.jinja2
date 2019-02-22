@@ -1,0 +1,155 @@
+{% extends 'base.jinja2' %}
+{% set active_page = "admin edit_invite" %}
+
+{% block header %}
+  <div class="form-header"><h1>{% block title %}Edit Invite{% endblock %}</h1></div>
+{% endblock %}
+
+{% block content %}
+  <form method="post" class="register-form">
+    <div class="form-group">
+      <div class="form-row">
+        <label for="email">Email</label>
+      </div>
+      <div class="form-row">
+        <div class="col">
+          <input name="email" id="email" type="email" class="form-control" value="{{invite['email']}}" disabled/>
+        </div>
+      </div>
+    </div>
+    
+    <div class="form-row">
+      <label>Guest Limits</label>
+    </div> 
+ 
+    <div class="form-group">
+      <div class="form-row align-items-center">
+        <div class="col-9">
+          <div class="form-check">
+            <input class="form-check-input input-toggler" type="checkbox" id="max_upcoming_enabled" data-toggles="max_upcoming" value="max_upcoming_enabled" name="max_upcoming_enabled"{% if invite['max_upcoming'] %} checked{% endif %} />
+            <label for="max_upcoming">Max Upcoming Stays</label> 
+          </div>
+        </div> 
+        <div class="col-3">
+          <input name="max_upcoming" id="max_upcoming" type="" class="form-control"{% if invite['max_upcoming'] %} value = "{{ invite['max_upcoming'] }}" {% else %} disabled{% endif %} />
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group"> 
+      <div class="form-row align-items-center">
+        <div class="col-9">
+          <div class="form-check">
+            <input class="form-check-input input-toggler" type="checkbox" id="max_duration_enabled" data-toggles="max_duration" value="max_duration_enabled" name="max_duration_enabled"{% if invite['max_duration'] %} checked{% endif %} /> 
+            <label for="max_duration">Max Stay Duration</label>
+          </div>
+        </div>
+        <div class="col-3">
+          <input name="max_duration" id="max_duration" type="" class="form-control"{% if invite['max_duration'] %} value = "{{ invite['max_duration'] }}" {% else %} disabled{% endif %} /> 
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="form-row align-items-center">
+        <div class="col-9">
+          <div class="form-check">
+            <input class="form-check-input input-toggler" type="checkbox" id="max_per_month_enabled" data-toggles="max_per_month" value="max_per_month_enabled" name="max_per_month_enabled"{% if invite['max_per_month'] %} checked{% endif %} />  
+            <label for="max_per_month">Max Stays Per Month</label>
+          </div>
+        </div>
+        <div class="col-3">
+          <input name="max_per_month" id="max_per_month" type="" class="form-control"{% if invite['max_per_month'] %} value = "{{ invite['max_per_month'] }}" {% else %} disabled{% endif %} />  
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="form-row align-items-center">
+        <div class="col-9">
+          <div class="form-check">
+            <input class="form-check-input input-toggler" type="checkbox" id="max_per_year_enabled" data-toggles="max_per_year" value="max_per_year_enabled" name="max_per_year_enabled"{% if invite['max_per_year'] %} checked{% endif %} /> 
+             <label for="max_per_year">Max Stays Per Year</label>
+          </div>
+        </div>
+        <div class="col-3">
+          <input name="max_per_year" id="max_per_year" type="" class="form-control"{% if invite['max_per_year'] %} value = "{{ invite['max_per_year'] }}" {% else %} disabled{% endif %} />
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="form-row align-items-center">
+        <div class="col-9">
+          <div class="form-check">
+            <input class="form-check-input input-toggler" type="checkbox" id="max_days_in_advance_enabled" data-toggles="max_days_in_advance" value="max_days_in_advance_enabled" name="max_days_in_advance_enabled"{% if invite['max_days_in_advance'] %} checked{% endif %} /> 
+            <label for="max_days_in_advance">Max Days In Advance</label>
+          </div>
+        </div>
+        <div class="col-3">
+          <input name="max_days_in_advance" id="max_days_in_advance" type="" class="form-control"{% if invite['max_days_in_advance'] %} value = "{{ invite['max_days_in_advance'] }}" {% else %} disabled{% endif %} /> 
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="form-row align-items-center">
+        <div class="col-9">
+          <div class="form-check">
+            <input class="form-check-input input-toggler" type="checkbox" id="min_days_between_enabled" data-toggles="min_days_between" value="min_days_between_enabled" name="min_days_between_enabled"{% if invite['min_days_between'] %} checked{% endif %} />
+            <label for="min_days_between">Min Nights Between Stays</label>
+          </div>
+        </div>
+        <div class="col-3">
+          <input name="min_days_between" id="min_days_between" type="" class="form-control"{% if invite['min_days_between'] %} value = "{{ invite['min_days_between'] }}" {% else %} disabled{% endif %} />
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="form-row align-items-center">
+        <div class="col-12">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="is_owner_presence_required" value="is_owner_presence_required" name="is_owner_presence_required"{% if invite['is_owner_presence_required'] %} checked{% endif %} />
+            <label for="is_owner_presence_required">Owner Presence Required</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="form-row align-items-center">
+        <div class="col-12">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="is_owner_confirmation_required" value="is_owner_confirmation_required" name="is_owner_confirmation_required"{% if invite['is_owner_confirmation_required'] %} checked{% endif %} />
+            <label for="is_owner_confirmation_required">Owner Must Confirm Reservations</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+ 
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a href="{{url_for('admin.remove_invite', invite_id=invite['id'])}}">
+      <button type="button" class="btn btn-danger">Remove Invite</button>
+    </a>
+    <a href="{{url_for('admin.invites')}}">
+      <button type="button" class="btn btn-secondary">Cancel</button>
+    </a>
+
+ 
+    </div>
+  </form>
+<script>
+$( ".input-toggler" ).each(function(index, element) {
+  $(element).change(function() {
+    if($(this).is(':checked')) {
+      document.getElementById($(element).attr("data-toggles")).disabled = false;
+    } else {
+      document.getElementById($(element).attr("data-toggles")).disabled = true;
+      document.getElementById($(element).attr("data-toggles")).value = '';
+    }
+  });
+});
+</script>
+{% endblock %}

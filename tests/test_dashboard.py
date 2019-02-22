@@ -22,11 +22,13 @@ def test_book(app, client, auth):
     ) 
     assert "/book/success" in response.headers["Location"]
 
+
+    sql = "select * from reservation;"
     with app.app_context():
-        assert (
-            get_db().execute("select * from reservation").fetchone()
-            is not None
-        )
+        with get_db().cursor() as cursor:
+            cursor.execute(sql)
+            reservation = cursor.fetchone()
+        assert reservation is not None 
 
 def test_booked_dates(app, client, auth):
     arrival = datetime.date.today() + datetime.timedelta(days=1)

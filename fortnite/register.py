@@ -24,9 +24,12 @@ def register():
             error = "First name is required."
         elif not last_name:
             error = "Last name is required."
-        elif cursor.execute('SELECT * from "user" WHERE email LIKE %s;', (email,)):
-            error = f"Email {email} is already registered."
-        cursor.close()
+        
+        if not error:
+            with get_db().cursor() as cursor:
+                cursor.execute('SELECT * from "user" WHERE email LIKE %s;', (email,))
+                if cursor.fetchone():
+                    error = f"This email is already registered to a user. Did you forget your password?" 
 
         if error is None:
             sql = (

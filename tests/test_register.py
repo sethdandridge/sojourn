@@ -17,10 +17,13 @@ def test_register(client, app):
     assert "http://localhost/" == response.headers["Location"]
 
     with app.app_context():
-        assert (
-            get_db().execute("select * from user where email = 'test2'").fetchone()
-            is not None
+        sql = (
+            "select * from \"user\" where email LIKE 'test2'"
         )
+        with get_db().cursor() as cursor:
+            cursor.execute(sql)
+            user = cursor.fetchone()
+        assert user is not None
 
 
 @pytest.mark.parametrize(
@@ -35,7 +38,7 @@ def test_register(client, app):
             "password",
             "first_name",
             "last_name",
-            b"is already registered.",
+            b"is already registered",
         ),
     ),
 )
