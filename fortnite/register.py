@@ -1,7 +1,7 @@
 from flask import Blueprint, flash, redirect, render_template, request, session, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from fortnite.db import get_db
+from .db import get_db
 
 bp = Blueprint("register", __name__, url_prefix="/register")
 
@@ -14,7 +14,7 @@ def register():
         first_name = request.form["first_name"]
         last_name = request.form["last_name"]
         db = get_db()
-
+        cursor = db.cursor()
         error = None
         if not email:
             error = "Email is required."
@@ -24,18 +24,21 @@ def register():
             error = "First name is required."
         elif not last_name:
             error = "Last name is required."
-        elif db.execute("SELECT id from user WHERE email = ?", (email,)).fetchone():
+        elif cursor.execute('SELECT * from "user" WHERE email LIKE %s;', (email,)):
             error = f"Email {email} is already registered."
+        cursor.close()
 
         if error is None:
-            cursor = db.cursor()
-            cursor.execute(
-                "INSERT INTO user (email, password, first_name, last_name) VALUES (?, ?, ?, ?)",
-                (email, generate_password_hash(password), first_name, last_name),
+            sql = (
+                'INSERT INTO "user" (email, password, first_name, last_name) '
+                "VALUES (%s, %s, %s, %s) RETURNING id"
             )
-            db.commit()
-            user_id = cursor.lastrowid
-            cursor.close()
+            with db.cursor() as cursor:
+                cursor.execute(
+                    sql,
+                    (email, generate_password_hash(password), first_name, last_name),
+                )
+                user_id = cursor.fetchone()["id"]
 
             session["user_id"] = user_id
             print(url_for("register.register"))

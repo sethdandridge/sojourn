@@ -2,7 +2,7 @@
 {% set active_page = "admin invites" %}
 
 {% block header %}
-  <h1>{% block title %}Manage Invites{% endblock %}</h1>
+  <h1>{% block title %}Manage Pending Invitations{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
@@ -20,7 +20,7 @@
   {% for invite in invites %}
     <tr>
       <td>{{invite['email']}}</td>
-      <td><a href="{{url_for('admin.edit_guest', guest_id=1)}}">Cancel</a></td>
+      <td><a href="{{url_for('admin.edit_guest', guest_id=invite['id'])}}">Cancel</a></td>
     </tr> 
   {% endfor %}
   </tbody>

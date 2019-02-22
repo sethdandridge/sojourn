@@ -10,29 +10,21 @@ from . import bp
 
 
 def get_booked_dates(db):
-    reservations = db.execute(
-        "SELECT * FROM reservation "
-        "WHERE date(arrival) >= DATE('now') "
-        "AND property_id = ? "
-        "AND status_id != 4; ",
-        (
-            g.property["id"],
-        ),
-        ).fetchall()
+    sql = "SELECT * FROM reservation " "WHERE property_id = %s " "AND status_id != 4;"
+    with db.cursor() as cursor:
+        cursor.execute(sql, (g.property["id"],))
+        reservations = cursor.fetchall()
+
     booked_dates = []
     for reservation in reservations:
-        arrival_date = datetime.strptime(reservation["arrival"], "%Y-%m-%d").date()
-        departure_date = datetime.strptime(reservation["departure"], "%Y-%m-%d").date()
-        delta = departure_date - arrival_date
+        delta = reservation["departure"] - reservation["arrival"]
         for i in range(delta.days + 1):
-            booked_dates.append(arrival_date + timedelta(i))
-    js_fixed_dates = []
-    for booked_date in booked_dates:
-        year = booked_date.year
-        month = booked_date.month
-        date = booked_date.day
-        js_fixed_dates.append(f"{year}, {month - 1}, {date}")
-    return js_fixed_dates
+            booked_date = reservation["arrival"] + timedelta(i)
+            booked_dates.append(
+                f"{booked_date.year}, {booked_date.month - 1}, {booked_date.day}"
+            )
+
+    return booked_dates
 
 
 @bp.route("/book", methods=("GET", "POST"))
@@ -56,25 +48,25 @@ def book():
         reservation_status_id = 1  # active
 
         if error is None:
-            db = get_db()
-            cursor = db.cursor()
-            cursor.execute(
+            sql = (
                 "INSERT INTO reservation "
                 "(user_id, property_id, name, arrival, departure, status_id, created) "
-                "VALUES "
-                "(?, ?, ?, ?, ?, ?, DATETIME('now')) ",
-                (
-                    g.user["id"],
-                    g.property["id"],
-                    reservation_name,
-                    arrival_date,
-                    departure_date,
-                    reservation_status_id,
-                ),
+                "VALUES (%s, %s, %s, %s, %s, %s, NOW()) "
+                "RETURNING id; "
             )
-            db.commit()
-            reservation_id = cursor.lastrowid
-            cursor.close()
+            with get_db().cursor() as cursor:
+                cursor.execute(
+                    sql,
+                    (
+                        g.user["id"],
+                        g.property["id"],
+                        reservation_name,
+                        arrival_date,
+                        departure_date,
+                        reservation_status_id,
+                    ),
+                )
+                reservation_id = cursor.fetchone()["id"]
 
             return redirect(
                 url_for("dashboard.book_success", reservation=reservation_id)
@@ -82,8 +74,7 @@ def book():
         else:
             flash(error)
 
-    db = get_db()
-    booked_dates = get_booked_dates(db)
+    booked_dates = get_booked_dates(get_db())
 
     return render_template("dashboard/book.jinja2", booked_dates=booked_dates)
 

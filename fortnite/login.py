@@ -12,7 +12,7 @@ from flask import (
 )
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from fortnite.db import get_db
+from .db import get_db
 
 bp = Blueprint("login", __name__, url_prefix="/login")
 
@@ -22,9 +22,12 @@ def login():
     if request.method == "POST":
         email = request.form["email"]
         password = request.form["password"]
-        db = get_db()
         error = None
-        user = db.execute("SELECT * FROM user WHERE email = ?", (email,)).fetchone()
+
+        db = get_db()
+        sql = "SELECT * FROM user WHERE email LIKE %s"
+        with db.cursor() as cursor:
+            user = cursor.execute(sql, (email,)).fetchone()
 
         if user is None:
             error = "Incorrect username."
@@ -48,9 +51,16 @@ def load_logged_in_user():
     if user_id is None:
         g.user = None
     else:
-        g.user = (
-            get_db().execute("SELECT * FROM user WHERE id = ?", (user_id,)).fetchone()
-        )
+        sql = 'SELECT * FROM "user" WHERE id = %s'
+        db = get_db()
+        with db.cursor() as cursor:
+            cursor.execute(sql, (user_id,))
+            if cursor.rowcount > 0:
+                g.user = cursor.fetchone()
+            else:
+                # in case the user id in the session cookie no longer exists
+                session.clear()
+                g.user = None
 
 
 def login_required(view):

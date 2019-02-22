@@ -6,6 +6,7 @@ from ..login import login_required
 from ..db import get_db
 
 def admin_required(view):
+    @login_required
     @functools.wraps(view)
     def wrapped_view(**kwargs):
         if not g.property['is_admin']:

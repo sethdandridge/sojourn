@@ -1,11 +1,12 @@
-from flask import Blueprint, flash, g, redirect, render_template, request, url_for, session
+from flask import flash, g, redirect, render_template, request, url_for, session
 from werkzeug.exceptions import abort
 
 from ..login import login_required
 from ..db import get_db
 from . import bp
 
-@bp.route("/create_property", methods=("GET", "POST",))
+
+@bp.route("/create_property", methods=("GET", "POST"))
 @login_required
 def create_property():
     if request.method == "POST":
@@ -16,43 +17,35 @@ def create_property():
             error = "Please specify a property name."
 
         if error is None:
-            db = get_db()
-            cursor = db.cursor()
-            cursor.execute(
+
+            sql = (
                 "INSERT INTO property "
                 "(owner_user_id, name) "
-                "VALUES "
-                "(?, ?);",
-                (
-                    g.user["id"],
-                    property_name,
-                ),
+                "VALUES (%s, %s) "
+                "RETURNING id; "
             )
-            property_id = cursor.lastrowid
-            cursor.execute(
+            with get_db().cursor() as cursor:
+                cursor.execute(sql, (g.user["id"], property_name))
+                property_id = cursor.fetchone()["id"]
+
+            sql = (
                 "INSERT INTO user_to_property "
                 "(user_id, property_id, is_admin) "
-                "VALUES "
-                "(?, ?, ?);",
-                (
-                    g.user["id"],
-                    property_id,
-                    1,
-                ),
+                "VALUES (%s, %s, %s); "
             )
-            db.commit()
-            cursor.close()
+            with get_db().cursor() as cursor:
+                cursor.execute(sql, (g.user["id"], property_id, True))
 
-            session['active_property_id'] = property_id
-            return redirect(url_for('dashboard.index'))
+            session["active_property_id"] = property_id
+
+            return redirect(url_for("dashboard.index"))
         else:
             flash(error)
-        
+
     return render_template("dashboard/create_property.jinja2")
+
 
 @bp.route("/create_propery/success")
 @login_required
 def create_propery_success():
-    #return "Congrats on booking your vacation! You will receive an email confirmation when you're approved."
-    # check if user can access other users's confirmations
     return render_template("dashboard/book_success.jinja2")

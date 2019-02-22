@@ -5,10 +5,7 @@ from flask import Flask, g, session
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
-    app.config.from_mapping(
-        SECRET_KEY="corgiOrgy",
-        DATABASE=os.path.join(app.instance_path, "fortnite.sqlite"),
-    )
+    app.config.from_mapping(SECRET_KEY="corgiOrgy", DATABASE="dbname=fortnite")
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
@@ -26,22 +23,28 @@ def create_app(test_config=None):
         pass
 
     from . import db
+
     db.init_app(app)
 
     from . import register
+
     app.register_blueprint(register.bp)
 
     from . import login
+
     app.register_blueprint(login.bp)
 
     from . import logout
+
     app.register_blueprint(logout.bp)
 
     from . import dashboard
+
     app.register_blueprint(dashboard.bp)
     app.add_url_rule("/", endpoint="index")
 
     from . import admin
+
     app.register_blueprint(admin.bp, url_prefix="/admin")
 
     @app.route("/nadia")
