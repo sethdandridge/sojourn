@@ -21,9 +21,9 @@
   <tbody>
   {% for guest in guests if guest['id'] != g.property['owner_user_id'] %}
     <tr>
-      <td>{{guest['first_name'] + " " + guest['last_name']}}{% if guest['is_admin'] %} (Admin){% endif %}</td>
-      <td>{{guest['email']}}</td>
-      <td>{% if guest['note'] %}{{guest['note']}}{% endif %}</td>
+      <td>{{guest['first_name']|e + " " + guest['last_name']|e}}{% if guest['is_admin'] %} (Admin){% endif %}</td>
+      <td>{{guest['email']|e}}</td>
+      <td>{% if guest['note'] %}{{guest['note']|e}}{% endif %}</td>
       <td><a href="{{url_for('admin.edit_guest', guest_id=guest['id'])}}">Edit</a></td>
     </tr> 
   {% endfor %}

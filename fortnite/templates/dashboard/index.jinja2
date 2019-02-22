@@ -1,9 +1,9 @@
 {% extends 'base.jinja2' %}
-{% set active_page = "dashboard home" %}
+{% set active_page = "dashboard index" %}
 
 {% block header -%}
   <h1>{% block title %}Dashboard{% endblock %}</h1>
 {%- endblock %}
 {% block content -%}
-Welcome home, {% print(g.user['first_name']) %}
+Welcome home, {{ g.user['first_name']|e }}
 {%- endblock %}

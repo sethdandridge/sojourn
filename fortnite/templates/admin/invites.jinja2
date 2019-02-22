@@ -19,7 +19,7 @@
   <tbody>
   {% for invite in invites %}
     <tr>
-      <td>{{invite['email']}}</td>
+      <td>{{invite['email']|e}}</td>
       <td><a href="{{url_for('admin.edit_invite', invite_id=invite['id'])}}">Edit</a></td>
     </tr> 
   {% endfor %}

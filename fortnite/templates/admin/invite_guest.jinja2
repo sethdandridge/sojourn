@@ -147,6 +147,8 @@ $( ".input-toggler" ).each(function(index, element) {
       document.getElementById($(element).attr("data-toggles")).disabled = false;
     } else {
       document.getElementById($(element).attr("data-toggles")).disabled = true;
+      document.getElementById($(element).attr("data-toggles")).value = "";
+
     }
   });
 });

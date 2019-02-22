@@ -31,45 +31,95 @@ def edit_guest(guest_id):
         is_admin_input = request.form.get("is_admin")
         note_input = request.form.get("note")
 
-        error = None
+        # Find any errors or auth issues
+        errors = validate_reservation_limits(request.form)
+        sql = "SELECT * FROM user_to_property WHERE user_id = %s AND property_id = %s;"
+        with get_db().cursor() as cursor:
+            cursor.execute(sql, (guest_id, g.property['id']))
+            guest = cursor.fetchone()
+        if not guest:
+            errors.append("This guest does not exist.")
+            return url_for('admin.guests') 
+
         if guest_id == g.user["id"]:
-            error = "You cannot edit yourself."
+            errors.append("You cannot edit yourself.")
 
         if is_admin_input == "1":
             is_admin = True
         else:
             is_admin = False
 
-        if error:
-            flash(error)
-            return redirect(url_for("admin.edit_guest", guest_id=guest_id))
-
-        if note_input and note_input.strip():
+        if type(note_input) is str:
             note = note_input.strip()
+            if len(note) > 255:
+                errors.append("Note exceeds maximum length (255 characters).")
         else:
             note = None
 
-        sql = (
-            "UPDATE user_to_property "
-            "SET is_admin = %s, "
-            "note = %s "
-            "WHERE user_id = %s "
-            "AND property_id = %s; "
-        )
-        with get_db().cursor() as cursor:
-            cursor.execute(sql, (is_admin, note, guest_id, g.property["id"]))
+        if errors:
+            for error in errors:
+                flash(error)
+                return render_template('admin.edit_guest', guest_id=guest_id)
+        else:
+            # update user_to_property
+            sql = (
+                "UPDATE user_to_property "
+                "SET is_admin = %s, "
+                "note = %s "
+                "WHERE user_id = %s "
+                "AND property_id = %s; "
+            )
+            with get_db().cursor() as cursor:
+                cursor.execute(sql, (is_admin, note, guest_id, g.property["id"]))
 
-        return redirect(url_for("admin.guests"))
+            # update reservation limits 
+            reservation_limits = normalize_reservation_limits(request.form)
+            sql = (
+                "UPDATE user_to_property_reservation_limits "
+                "SET "
+                " max_upcoming = %s, "
+                " max_duration = %s, "
+                " max_per_month = %s, "
+                " max_per_year = %s, "
+                " max_days_in_advance = %s, "
+                " min_days_between = %s, "
+                " is_owner_presence_required = %s, "
+                " is_owner_confirmation_required = %s "
+                " WHERE user_to_property_reservation_limits.user_id = %s "
+                " AND user_to_property_reservation_limits.property_id = %s; "
+            )
+            with get_db().cursor() as cursor:
+                cursor.execute(
+                    sql,
+                    (
+                        reservation_limits["max_upcoming"],
+                        reservation_limits["max_duration"],
+                        reservation_limits["max_per_month"],
+                        reservation_limits["max_per_year"],
+                        reservation_limits["max_days_in_advance"],
+                        reservation_limits["min_days_between"],
+                        reservation_limits["is_owner_presence_required"],
+                        reservation_limits["is_owner_confirmation_required"],
+                        guest_id,
+                        g.property['id']
+                    ),
+                )
+            return redirect(url_for("admin.guests"))
 
     sql = (
         'SELECT * FROM "user" '
         'JOIN user_to_property ON user_to_property.user_id = "user".id '
-        "WHERE user_to_property.property_id = %s "
+        'JOIN user_to_property_reservation_limits '
+        ' ON user_to_property_reservation_limits.user_id = "user".id ' 
+        'WHERE user_to_property.property_id = %s '
         'AND "user".id = %s '
     )
     with get_db().cursor() as cursor:
         cursor.execute(sql, (g.property["id"], guest_id))
         guest = cursor.fetchone()
+    if not guest:
+        flash("This guest does not exist.")
+        return redirect(url_for('admin.guests'))
 
     return render_template("admin/edit_guest.jinja2", guest=guest)
 
@@ -104,7 +154,9 @@ def remove_guest(guest_id):
             )
             with get_db().cursor() as cursor:
                 cursor.execute(sql_cancel_rezzies, (guest_id, g.property["id"]))
-                cursor.execute(sql_remove_reservation_limits, (guest_id, g.property["id"]))
+                cursor.execute(
+                    sql_remove_reservation_limits, (guest_id, g.property["id"])
+                )
                 cursor.execute(sql_remove_guest, (guest_id, g.property["id"]))
 
             # user is deleting themselves
@@ -136,35 +188,61 @@ def validate_reservation_limits(form):
     min_days_between = form.get("min_days_between", "").strip()
 
     if max_upcoming:
-        if not max_upcoming.isdigit() or int(max_upcoming) < 0 or int(max_upcoming) > 2_147_483_647:
-            errors.append("Invalid Max Upcoming Stays. Please enter a reasonable number of stays.")
+        if (
+            not max_upcoming.isdigit()
+            or int(max_upcoming) < 0
+            or int(max_upcoming) > 2_147_483_647
+        ):
+            errors.append(
+                "Invalid Max Upcoming Stays. Please enter a reasonable number of stays."
+            )
 
     if max_duration:
-        if not max_duration.isdigit() or int(max_duration) < 0 or int(max_duration) > 2_147_483_647:
+        if (
+            not max_duration.isdigit()
+            or int(max_duration) < 0
+            or int(max_duration) > 2_147_483_647
+        ):
             errors.append(
                 "Invalid Max Stay Duration. Please enter a reasonable number of days."
             )
 
     if max_per_month:
-        if not max_per_month.isdigit() or int(max_per_month) < 0 or int(max_per_month) > 2_147_483_647:
-            errors.append(           
+        if (
+            not max_per_month.isdigit()
+            or int(max_per_month) < 0
+            or int(max_per_month) > 2_147_483_647
+        ):
+            errors.append(
                 "Invalid Max Stays Per Month. Please enter a reasonable number of stays."
             )
 
     if max_per_year:
-        if not max_per_year.isdigit() or int(max_per_year) < 0 or int(max_per_year) > 2_147_483_647:
+        if (
+            not max_per_year.isdigit()
+            or int(max_per_year) < 0
+            or int(max_per_year) > 2_147_483_647
+        ):
             errors.append(
                 "Invalid Max Stays Per Year. Please enter a reasonable number of stays."
             )
 
     if max_days_in_advance:
-        if not max_days_in_advance.isdigit() or int(max_days_in_advance) < 0 or int(max_days_in_advance) > 2_147_483_647:
+        if (
+            not max_days_in_advance.isdigit()
+            or int(max_days_in_advance) < 0
+            or int(max_days_in_advance) > 2_147_483_647
+        ):
             errors.append(
                 "Invalid Max Days In Advance. Please enter a reasonable number of days."
             )
 
     if min_days_between:
-        if not min_days_between.isdigit() or int(min_days_between) < 0 or int(min_days_between) > 2_147_483_647:
+        if (
+            not min_days_between.isdigit()
+            or int(min_days_between) < 0
+            or int(min_days_between) > 2_147_483_647
+        ):
             errors.append(
                 "Invalid Minimum Nights Between Stays. Please enter a reasonable number of days."
             )
@@ -346,8 +424,9 @@ def edit_invite(invite_id):
             invite = cursor.fetchone()
         if not invite:
             errors.append("This invite does not exist.")
-        elif invite["property_id"] != invite["property_id"]:
+        elif invite["property_id"] != g.property['id']:
             errors.append("You do not have permission to edit this invite.")
+
         if errors:
             for error in errors:
                 flash(error)
@@ -368,7 +447,8 @@ def edit_invite(invite_id):
                 " WHERE invite_reservation_limits.invite_id = %s; "
             )
             with get_db().cursor() as cursor:
-                cursor.execute(sql, 
+                cursor.execute(
+                    sql,
                     (
                         reservation_limits["max_upcoming"],
                         reservation_limits["max_duration"],
@@ -379,9 +459,9 @@ def edit_invite(invite_id):
                         reservation_limits["is_owner_presence_required"],
                         reservation_limits["is_owner_confirmation_required"],
                         invite_id,
-                    )
+                    ),
                 )
-            return redirect(url_for('admin.invites'))
+            return redirect(url_for("admin.invites"))
 
     sql = (
         "SELECT * FROM invite "
@@ -408,35 +488,29 @@ def remove_invite(invite_id):
             "AND invite.property_id = %s; "
         )
         with get_db().cursor() as cursor:
-            cursor.execute(sql, (invite_id, g.property['id']))
+            cursor.execute(sql, (invite_id, g.property["id"]))
             has_access = cursor.fetchone()
 
         if not has_access:
             abort(401)
 
-        sql_remove_invite = (
-            "DELETE FROM invite "
-            "WHERE id = %s; " 
-        )
+        sql_remove_invite = "DELETE FROM invite " "WHERE id = %s; "
         sql_delete_invite_reservation_limits = (
-            "DELETE FROM invite_reservation_limits "
-            "WHERE invite_id = %s; "
+            "DELETE FROM invite_reservation_limits " "WHERE invite_id = %s; "
         )
         with get_db().cursor() as cursor:
             cursor.execute(sql_delete_invite_reservation_limits, (invite_id,))
             cursor.execute(sql_remove_invite, (invite_id,))
 
-        return redirect(url_for('admin.invites'))
+        return redirect(url_for("admin.invites"))
 
     sql = (
-        "SELECT * FROM invite "
-        "WHERE invite.id = %s "
-        "AND invite.property_id = %s; "
+        "SELECT * FROM invite " "WHERE invite.id = %s " "AND invite.property_id = %s; "
     )
     with get_db().cursor() as cursor:
-        cursor.execute(sql, (invite_id, g.property['id']))
+        cursor.execute(sql, (invite_id, g.property["id"]))
         invite = cursor.fetchone()
-    if invite: 
+    if invite:
         return render_template("admin/remove_invite.jinja2", invite=invite)
     else:
         abort(404)

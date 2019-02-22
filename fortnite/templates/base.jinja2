@@ -14,7 +14,7 @@
 <main role="main" class="container">
   {% for message in get_flashed_messages() %}
   <div class="alert alert-danger" role="alert">
-    {{ message }}
+    {{ message|e }}
   </div>
   {% endfor -%}
   <header>

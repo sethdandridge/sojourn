@@ -9,7 +9,7 @@
       (url_for('logout.logout'), 'logout', 'Log Out', True, False, True),
   ] -%}
   {% set active_page = active_page -%}
-  <a class="navbar-brand" href="/">APP</a>
+  <a class="navbar-brand" href="/">🏝</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls=".navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -43,11 +43,11 @@
       {% elif g.user and g.properties %}
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          {{ g.property['name'] }}
+          {{ g.property['name']|e }}
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
         {% for property in g.properties if property['id'] != g.property['id']%} 
-          <a class="dropdown-item" href="{{ url_for('dashboard.switch_property', property_id=property['id']) }}">{{ property.name }}</a> 
+          <a class="dropdown-item" href="{{ url_for('dashboard.switch_property', property_id=property['id']) }}">{{ property.name|e }}</a> 
         {% endfor %}
         {% if g.properties|length > 1 %}
           <div class="dropdown-divider"></div>

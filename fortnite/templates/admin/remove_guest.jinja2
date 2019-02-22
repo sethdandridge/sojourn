@@ -8,9 +8,9 @@
 {% block content %}
 <center>
 <form method="post">
-<p>Are you sure you want to remove {{guest['first_name']}} {{guest['last_name']}} from the {{g.property['name']}} guest list?</p>
-<p>{{guest['first_name']}} will no longer be able to book new reservations and all of their upcoming reservations will be canceled.</p>
-      <button type="submit" class="btn btn-danger">Remove {{guest['first_name']}} {{guest['last_name']}}</button>
+<p>Are you sure you want to remove {{guest['first_name']|e}} {{guest['last_name']|e}} from the {{g.property['name']|e}} guest list?</p>
+<p>{{guest['first_name']|e}} will no longer be able to book new reservations and all of their upcoming reservations will be canceled.</p>
+      <button type="submit" class="btn btn-danger">Remove {{guest['first_name|e']}} {{guest['last_name|e']}}</button>
       <a href="{{url_for('admin.guests')}}">
         <button type="button" class="btn btn-secondary">Cancel</button>
       </a>
