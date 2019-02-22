@@ -20,7 +20,7 @@
   {% for reservation in reservations %}
     <tr>
       <td>{{reservation['status']}}</td>
-      <td>{{reservation['reservation']}}|e</td>
+      <td>{{reservation['reservation']|e}}</td>
       <td>{{reservation['nights']}}</td>
       <td>{% if reservation['is_cancelable'] %}<a href="" onclick="return cancel({{reservation['id']}});">Cancel</a>{% endif %}</td>
     </tr> 

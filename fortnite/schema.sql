@@ -56,7 +56,7 @@ CREATE TABLE invite (
 );
 
 CREATE TABLE invite_reservation_limits (
-  invite_id INTEGER NOT NULL REFERENCES invite (id),
+  invite_id INTEGER NOT NULL REFERENCES invite (id) ON DELETE CASCADE,
   max_upcoming INTEGER CHECK (max_upcoming >= 0),
   max_duration INTEGER CHECK (max_duration >= 0),
   max_per_month INTEGER CHECK (max_per_month >= 0),

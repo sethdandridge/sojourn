@@ -27,7 +27,7 @@ def register():
         
         if not error:
             with get_db().cursor() as cursor:
-                cursor.execute('SELECT * from "user" WHERE email LIKE %s;', (email,))
+                cursor.execute('SELECT * from "user" WHERE email ILIKE %s;', (email,))
                 if cursor.fetchone():
                     error = f"This email is already registered to a user. Did you forget your password?" 
 
@@ -43,6 +43,32 @@ def register():
                 )
                 user_id = cursor.fetchone()["id"]
 
+            # if there are any invites, move them over
+            sql_move_property_association = (
+                "INSERT INTO user_to_property "
+                "(user_id, property_id) "
+                "SELECT %s, property_id "
+                "FROM invite "
+                "WHERE invite.email ILIKE %s; "
+            )
+            sql_move_rules = (
+                "INSERT INTO user_to_property_reservation_limits "
+                "(user_id, property_id, max_upcoming, max_duration, max_per_month, max_per_year, "
+                "max_days_in_advance, min_days_between, is_owner_presence_required, is_owner_confirmation_required) "
+                "SELECT %s, property_id, max_upcoming, max_duration, max_per_month, max_per_year, "
+                "max_days_in_advance, min_days_between, is_owner_presence_required, is_owner_confirmation_required "
+                "FROM invite_reservation_limits "
+                "JOIN invite ON invite.id = invite_reservation_limits.invite_id "
+                "WHERE invite.email ILIKE %s; "
+            )
+            sql_delete_invite =  (
+                "DELETE FROM invite WHERE email ILIKE %s; "
+            )
+            with get_db().cursor() as cursor:
+                cursor.execute(sql_move_property_association, (user_id, email))
+                cursor.execute(sql_move_rules, (user_id, email))
+                cursor.execute(sql_delete_invite, (email,))
+                
             session["user_id"] = user_id
             print(url_for("register.register"))
             return redirect(url_for("dashboard.index"))

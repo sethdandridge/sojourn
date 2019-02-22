@@ -299,7 +299,7 @@ def invite_guest():
             'SELECT * FROM "user" '
             'JOIN user_to_property ON user_to_property.user_id = "user".id '
             "WHERE user_to_property.property_id = %s "
-            'AND "user".email LIKE %s '
+            'AND "user".email ILIKE %s '
         )
         with get_db().cursor() as cursor:
             cursor.execute(sql, (g.property["id"], email))
@@ -309,7 +309,7 @@ def invite_guest():
         sql = (
             "SELECT * FROM invite "
             "WHERE invite.property_id = %s "
-            "AND invite.email LIKE %s; "
+            "AND invite.email ILIKE %s; "
         )
         with get_db().cursor() as cursor:
             cursor.execute(sql, (g.property["id"], email))
@@ -322,7 +322,7 @@ def invite_guest():
         else:
             reservation_limits = normalize_reservation_limits(request.form)
 
-            sql = 'SELECT * FROM "user" WHERE "user".email LIKE %s;'
+            sql = 'SELECT * FROM "user" WHERE "user".email ILIKE %s;'
             with get_db().cursor() as cursor:
                 cursor.execute(sql, (email,))
                 guest = cursor.fetchone()
@@ -494,9 +494,9 @@ def remove_invite(invite_id):
         if not has_access:
             abort(401)
 
-        sql_remove_invite = "DELETE FROM invite " "WHERE id = %s; "
+        sql_remove_invite = "DELETE FROM invite WHERE id = %s; "
         sql_delete_invite_reservation_limits = (
-            "DELETE FROM invite_reservation_limits " "WHERE invite_id = %s; "
+            "DELETE FROM invite_reservation_limits WHERE invite_id = %s; "
         )
         with get_db().cursor() as cursor:
             cursor.execute(sql_delete_invite_reservation_limits, (invite_id,))
@@ -505,7 +505,7 @@ def remove_invite(invite_id):
         return redirect(url_for("admin.invites"))
 
     sql = (
-        "SELECT * FROM invite " "WHERE invite.id = %s " "AND invite.property_id = %s; "
+        "SELECT * FROM invite WHERE invite.id = %s AND invite.property_id = %s; "
     )
     with get_db().cursor() as cursor:
         cursor.execute(sql, (invite_id, g.property["id"]))

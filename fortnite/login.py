@@ -15,7 +15,7 @@ def login():
         password = request.form["password"]
         error = None
  
-        sql = 'SELECT * FROM "user" WHERE email LIKE %s'
+        sql = 'SELECT * FROM "user" WHERE email ILIKE %s'
         with get_db().cursor() as cursor:
             cursor.execute(sql, (email,))
             user = cursor.fetchone()

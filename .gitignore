@@ -23,6 +23,7 @@ __pycache__/
 .coverage
 htmlcov/
 coverage_html/
+init-db.sh
 
 dist/
 build/
