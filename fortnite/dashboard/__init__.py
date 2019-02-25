@@ -38,6 +38,7 @@ def load_active_property():
     if g.user and g.properties:
         if active_property_id is None:
             g.property = g.properties[0]
+            session['active_property_id'] = g.property['id']
         else:
             sql = (
                 "SELECT property.*, user_to_property.is_admin FROM user_to_property "

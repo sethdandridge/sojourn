@@ -3,7 +3,7 @@ from flask import g, session
 from fortnite.db import get_db
 
 
-def test_login(client, auth):
+def test_login(app, client, auth):
     assert client.get("/login").status_code == 200
     response = auth.login()
     assert "http://localhost/" == response.headers["Location"]
@@ -13,6 +13,11 @@ def test_login(client, auth):
         assert session["user_id"] == 2
         assert g.user["email"] == "user@user.com"
 
+    with client:
+        with client.session_transaction() as sess:
+            sess['user_id'] = 20
+        client.get("/")
+        assert session.get('user_id') is None
 
 @pytest.mark.parametrize(
     ("email", "password", "message"),

@@ -45,7 +45,7 @@ def create_property():
     return render_template("dashboard/create_property.jinja2")
 
 
-@bp.route("/create_propery/success")
+@bp.route("/create_property/success")
 @login_required
-def create_propery_success():
+def create_property_success():
     return render_template("dashboard/book_success.jinja2")

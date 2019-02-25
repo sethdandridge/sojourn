@@ -24,6 +24,7 @@ __pycache__/
 htmlcov/
 coverage_html/
 init-db.sh
+run-tests.sh
 
 dist/
 build/

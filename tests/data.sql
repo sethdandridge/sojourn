@@ -7,7 +7,11 @@ VALUES
   ('user@user.com',
   'pbkdf2:sha256:50000$Io4fJIjy$f1738f6c8b5be582c608e201c2d915a0387b4d97ca141b2dea8e30185e1f39ed',
   'user',
-  'user');
+  'user'),
+  ('notguest@notguest.com',
+  'pbkdf2:sha256:50000$Io4fJIjy$f1738f6c8b5be582c608e201c2d915a0387b4d97ca141b2dea8e30185e1f39ed',
+  'notguest',
+  'notguest');
 
 INSERT INTO property (name, owner_user_id)
 VALUES
@@ -18,9 +22,7 @@ VALUES
 
 INSERT INTO user_to_property (user_id, property_id, is_admin)
 VALUES
-  (2,
-  1,
-  TRUE),
-  (2,
-  2,
-  FALSE);
+  (2, 1, FALSE),
+  (2, 2, FALSE),
+  (1, 1, TRUE),
+  (1, 2, TRUE);
