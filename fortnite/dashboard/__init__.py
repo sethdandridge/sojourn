@@ -44,13 +44,14 @@ def load_active_property():
                 "SELECT property.*, user_to_property.is_admin FROM user_to_property "
                 "JOIN property ON property.id = user_to_property.property_id "
                 "WHERE user_to_property.user_id = %s "
-                "AND property.id = %s; "
+                "AND user_to_property.property_id = %s; "
             )
 
             with get_db().cursor() as cursor:
                 cursor.execute(sql, (g.user["id"], active_property_id))
                 g.property = cursor.fetchone()
-
-            session["active_property_id"] = g.property["id"]
-            # else:
-            #    g.property = g.properties[0]
+            if g.property:  
+                session["active_property_id"] = g.property["id"]
+            else:
+                g.property = g.properties[0]
+                session["active_property_id"] = g.property["id"]

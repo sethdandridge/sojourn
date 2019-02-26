@@ -10,7 +10,7 @@ from . import bp
 @login_required
 def switch_property(property_id):
     # double check  user is a guest of property (g.property logic does this as well)
-    sql = "SELECT * FROM user_to_property " "WHERE property_id = %s AND user_id = %s; "
+    sql = "SELECT * FROM user_to_property WHERE property_id = %s AND user_id = %s; "
     with get_db().cursor() as cursor:
         cursor.execute(sql, (property_id, g.user["id"]))
         results = cursor.fetchone()

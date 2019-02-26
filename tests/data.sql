@@ -16,13 +16,21 @@ VALUES
 INSERT INTO property (name, owner_user_id)
 VALUES
   ('Morro Bay',
-  2),
+  1),
   ('Mexico',
-  2);
+  1);
 
 INSERT INTO user_to_property (user_id, property_id, is_admin)
 VALUES
-  (2, 1, FALSE),
-  (2, 2, FALSE),
   (1, 1, TRUE),
-  (1, 2, TRUE);
+  (1, 2, TRUE),
+  (2, 1, FALSE),
+  (2, 2, FALSE);
+
+INSERT INTO invite (property_id, email)
+VALUES
+  (1, 'invited@invited.com');
+
+INSERT INTO invite_reservation_limits (invite_id, max_upcoming, max_duration, max_per_month, max_per_year, max_days_in_advance, min_days_between, is_owner_presence_required, is_owner_confirmation_required)
+VALUES
+  (1, NULL, NULL, NULL, NULL, NULL, NULL, False, False);
