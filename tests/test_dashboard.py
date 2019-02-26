@@ -5,7 +5,7 @@ from fortnite.dashboard.book import get_booked_dates
 import datetime
 
 def test_book(app, client, auth):
-    auth.login()
+    auth.login(email="unlimited@unlimited.com")
     assert client.get('/book').status_code == 200
     arrival = datetime.date.today() + datetime.timedelta(days=1)
     departure = datetime.date.today() + datetime.timedelta(days=5)
@@ -62,6 +62,9 @@ departure = departure.strftime("%Y-%m-%d")
     (
         ("", departure, "", b"Please specify an arrival date."),
         (arrival, "", "", b"Please specify a departure date."),
+        (arrival, departure, "a" * 256, b"Name of reservation too long (255 character max)."),
+        (departure, arrival, "", b"Arrival date must be prior to departure date. Make sure you are arriving before you are departing."),
+        ("2000-01-01", "2000-01-03", "", b"Arrival date is in the past. Please select a future date for your arrival.")
     ),
 )
 def test_book_validate_input(client, auth, arrival, departure, name, message):
@@ -75,6 +78,69 @@ def test_book_validate_input(client, auth, arrival, departure, name, message):
         },
     )
     assert message in response.data
+
+def test_book_date_overlap(app, auth, client):
+    arrival = datetime.date.today() + datetime.timedelta(days=1)
+    departure = datetime.date.today() + datetime.timedelta(days=8)
+    arrival = arrival.strftime("%Y-%m-%d")
+    departure = departure.strftime("%Y-%m-%d")
+
+    arrival_2 = datetime.date.today() + datetime.timedelta(days=6)
+    departure_2 = datetime.date.today() + datetime.timedelta(days=10)
+    arrival_2 = arrival_2.strftime("%Y-%m-%d")
+    departure_2 = departure_2.strftime("%Y-%m-%d")
+
+    auth.login()
+    client.post(
+        "/book",
+        data={
+            "arrival_date": arrival,
+            "departure_date": departure, 
+        },
+    )
+    response = client.post(
+        "/book",
+        data={
+            "arrival_date": arrival_2,
+            "departure_date": departure_2, 
+        },
+    )
+    assert b"These dates overlap with an existing reservation. Please choose different dates." in response.data
+
+def test_limited_booking(app, auth, client):
+    auth.login("limited@limited.com")
+
+    arrival = datetime.date.today() + datetime.timedelta(days=1)
+    departure = datetime.date.today() + datetime.timedelta(days=2)
+    arrival = arrival.strftime("%Y-%m-%d")
+    departure = departure.strftime("%Y-%m-%d")
+    response = client.post(
+        "/book",
+        data={
+            "arrival_date": arrival,
+            "departure_date": departure,
+        },
+    )
+    assert response.status_code == 302
+
+    arrival_2 = datetime.date.today() + datetime.timedelta(days=5)
+    departure_2 = datetime.date.today() + datetime.timedelta(days=10000)
+    arrival_2 = arrival_2.strftime("%Y-%m-%d")
+    departure_2 = departure_2.strftime("%Y-%m-%d")
+    response = client.post(
+        "/book",
+        data={
+            "arrival_date": arrival_2,
+            "departure_date": departure_2,
+        },
+    )
+    print(response.data)
+    assert b"Number of upcoming and pending reservations exceeds limit" in response.data
+    assert b"Duration of stay" in response.data
+    assert b"exceeds the monthly limit" in response.data
+    assert b"eservations exceeds the yearly limit" in response.data
+    assert b"too far in advance" in response.data
+    assert b"too close to one or more of your upcoming" in response.data 
 
 def test_reservations(app, auth, client):
     auth.login()
