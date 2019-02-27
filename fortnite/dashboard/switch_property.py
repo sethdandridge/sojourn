@@ -20,7 +20,7 @@ def switch_property(property_id):
 
     session["active_property_id"] = property_id
 
-    if request.referrer:
+    if request.referrer and 'admin' not in request.referrer:
         return redirect(request.referrer)
     else:
         return redirect(url_for("dashboard.index"))

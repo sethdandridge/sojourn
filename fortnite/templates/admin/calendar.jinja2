@@ -31,12 +31,18 @@
   {% for reservation in reservations %}
     <tr>
       <td>{{reservation['status_string']}}</td>
+    {% if g.user['id'] == reservation['user_id'] %}
+      <td>{{reservation['guest']|e}} (You)</td>
+      {% else %}
       <td><a href="{{url_for('admin.edit_guest', guest_id=reservation['user_id'])}}">{{reservation['guest']|e}}</a></td>
+    {% endif %}
       <td>{{reservation['reservation']|e}}</td>
       <td>{{reservation['nights']}}</td>
-      <td>Edit</td> 
+      <td>{% if reservation['status_string'] in ["Active", "Pending Approval", "Upcoming"] -%}
+        <a href="{{url_for('admin.edit_reservation', reservation_id=reservation['id'])}}">Edit</a>
+      {%- endif %}</td> 
     </tr> 
-  {% endfor %}
+  {%- endfor %}
   </tbody>
 </table>
 {% else %}

@@ -1,0 +1,65 @@
+{% extends 'base.jinja2' %}
+{% set active_page = "admin edit reservation" %}
+
+{% block header %}
+  <div class="form-header"><h1>{% block title %}Edit Reservation{% endblock %}</h1></div>
+{% endblock %}
+
+{% block content %}
+  <form method="post" class="register-form">
+    <div class="form-group">
+      <div class="form-row"> 
+        <label for="staticGuest" class="col-4 col-form-label">Guest:</label>
+        <div class="col-8">
+          <input type "text" class="form-control-plaintext" id="staticGuest" value="{{reservation['guest']}}" readonly>
+        </div>
+      </div> 
+      <div class="form-row">
+        <label for="staticArrival" class="col-4 col-form-label">Arrival:</label>
+        <div class="col-8">
+          <input type "text" class="form-control-plaintext" id="staticArrival" value="{{reservation['arrival']}}" readonly>
+        </div>
+      </div>
+      <div class="form-row">
+        <label for="StaticDeparture" class="col-4 col-form-label">Departure:</label>
+        <div class="col-8">
+          <input type "text" class="form-control-plaintext" id="staticDeparture" value="{{reservation['departure']}}" readonly>
+        </div>
+      </div>
+      <div class="form-row">
+        <label for="StaticNights" class="col-4 col-form-label">Nights:</label>
+        <div class="col-8">
+          <input type "text" class="form-control-plaintext" id="staticNights" value="{{reservation['nights']}}" readonly>
+        </div>
+      </div>
+      {% if reservation['guest_note'] %}
+      <div class="form-row">
+        <label for="StaticGuestNote" class="col-4 col-form-label">Guest Note:</label>
+        <div class="col-8">
+          <input type "text" class="form-control-plaintext" id="staticGuestNote" value="{{reservation['note']}}" readonly>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+    <div class="form-group">
+      <div class="form-row">
+        <label for="status">Status</label>
+      </div>
+      <div class="form-row">
+        <div class="col">
+          <select name="status" id="status" class="form-control" >
+            <option value="1"{% if reservation['status_id'] == 1 %} selected{% endif %}>Approved</option>
+            <option value="2"{% if reservation['status_id'] == 2 %} selected{% endif %}>Pending Approval</option>
+            <option value="3"{% if reservation['status_id'] == 3 %} selected{% endif %}>Denied</option>
+            <option value="4"{% if reservation['status_id'] == 4 %} selected{% endif %}>Canceled</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a href="{{url_for('admin.calendar')}}">
+      <button type="button" class="btn btn-secondary">Cancel</button>
+    </a>
+  </form>
+{% endblock %}

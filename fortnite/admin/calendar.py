@@ -7,7 +7,6 @@ from ..db import get_db
 from . import bp
 from . import admin_required
 
-
 @bp.route("/calendar")
 @admin_required
 def calendar():
@@ -17,7 +16,9 @@ def calendar():
     show_canceled_and_denied = True if show_canceled_and_denied == 'true' else False  
 
     sql = (
-        'SELECT *, '
+        'SELECT  '
+        ' reservation.id AS id, '
+        ' "user".id as user_id, '
         ' CONCAT("user".first_name, \' \', "user".last_name) AS guest, ' 
         ' departure - arrival AS nights, '
         ' CONCAT( '
@@ -55,4 +56,4 @@ def calendar():
         cursor.execute(sql, (g.property['id'],))
         reservations = cursor.fetchall()
     return render_template("admin/calendar.jinja2", reservations=reservations, show_canceled_and_denied=show_canceled_and_denied, show_past=show_past)
-
+   
