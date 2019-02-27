@@ -20,3 +20,4 @@ def admin_required(view):
 bp = Blueprint("admin", __name__)
 
 from . import guests
+from . import calendar

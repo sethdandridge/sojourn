@@ -3,7 +3,6 @@ import re
 from flask import flash, g, redirect, render_template, request, url_for
 from werkzeug.exceptions import abort
 
-from ..login import login_required
 from ..db import get_db
 from . import bp
 from . import admin_required

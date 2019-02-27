@@ -1,0 +1,63 @@
+{% extends 'base.jinja2' %}
+{% set active_page = "admin calendar" %}
+
+{% block header %}
+  <h1>{% block title %}Calendar{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+<form>
+  <div class="form-check form-check-inline">
+    <input class="form-check-input query-toggler" type="checkbox" id="show_past" value="show_past"{% if show_past %} checked{% endif %}>
+    <label class="form-check-label" for="show_past">Show past reservations</label>
+  </div>
+  <div class="form-check form-check-inline">
+    <input class="form-check-input query-toggler" type="checkbox" id="show_canceled_and_denied" value="show_canceled_and_denied"{% if show_canceled_and_denied %} checked{% endif %}>
+    <label class="form-check-label" for="show_canceled_and_denied">Show canceled and denied</label>
+  </div>
+</form>
+{% if reservations %}
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Status</th>
+      <th scope="col">Guest</th>
+      <th scope="col">Reservation</th>
+      <th scope="col">Nights</th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for reservation in reservations %}
+    <tr>
+      <td>{{reservation['status_string']}}</td>
+      <td><a href="{{url_for('admin.edit_guest', guest_id=reservation['user_id'])}}">{{reservation['guest']|e}}</a></td>
+      <td>{{reservation['reservation']|e}}</td>
+      <td>{{reservation['nights']}}</td>
+      <td>Edit</td> 
+    </tr> 
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>There are no reservations to display.</p>
+{% endif %}
+<script>
+var url_params = new URLSearchParams(window.location.search);
+query_params = {}
+for (let param of url_params) {
+  query_params[param[0]] = param[1];
+}
+$( ".query-toggler" ).each(function(index, element) {
+  $(element).change(function() {
+    if($(this).is(':checked')) {
+      query_params[this.id] = "true"
+    } else {
+      query_params[this.id] = "false" 
+    }
+    window.location.href = window.location.pathname+"?"+$.param(query_params)
+  });
+});
+</script>
+{% endblock %}
+
