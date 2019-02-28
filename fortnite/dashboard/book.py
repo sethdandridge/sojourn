@@ -1,11 +1,10 @@
+from datetime import datetime, date, timedelta
+
 from flask import flash, g, redirect, render_template, request, url_for
 from werkzeug.exceptions import abort
 
-from fortnite.login import login_required
-from datetime import datetime, date, timedelta
-
-from fortnite.db import get_db
-
+from ..auth import login_required, email_confirmation_required
+from ..db import get_db
 from . import bp
 
 
@@ -30,6 +29,8 @@ def get_booked_dates(db):
 @bp.route("/book", methods=("GET", "POST"))
 @login_required
 def book():
+    if not g.property:
+        abort(403)
     if request.method == "POST":
         arrival_date_str = request.form.get("arrival_date")
         departure_date_str = request.form.get("departure_date")

@@ -34,7 +34,7 @@ def test_login_validate_input(auth, email, password, message):
 def test_login_required(client, auth):
     response = client.get("/")
     # if no login cookie found, send to login page
-    assert "http://localhost/login/" == response.headers["Location"]
+    assert "http://localhost/login" == response.headers["Location"]
 
     auth.login()
     response = client.get("/")

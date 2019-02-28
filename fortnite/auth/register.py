@@ -1,12 +1,11 @@
 from flask import Blueprint, flash, redirect, render_template, request, session, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from .db import get_db
-from .email import mail_registration_confirmation
+from ..db import get_db
+from ..email import mail_registration_confirmation
+from . import bp
 
-bp = Blueprint("register", __name__, url_prefix="/register")
-
-@bp.route("/", methods=("GET", "POST"), strict_slashes=False)
+@bp.route("/register", methods=("GET", "POST"))
 def register():
     if request.method == "POST":
         email = request.form["email"]
@@ -34,7 +33,7 @@ def register():
                 'INSERT INTO "user" (email, password, first_name, last_name) '
                 "VALUES (%s, %s, %s, %s) RETURNING id;"
             )
-            with db.cursor() as cursor:
+            with get_db().cursor() as cursor:
                 cursor.execute(
                     sql,
                     (email, generate_password_hash(password), first_name, last_name),
@@ -70,8 +69,9 @@ def register():
             mail_registration_confirmation(user_id)
 
             session["user_id"] = user_id
-            return redirect(url_for("dashboard.index"))
 
-        flash(error)
-    return mail_registration_confirmation(1)
-    return render_template("register/register.jinja2")
+            return redirect(url_for('index'))
+        else: 
+            flash(error)
+ 
+    return render_template("auth/register.jinja2")

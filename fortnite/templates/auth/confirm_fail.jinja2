@@ -1,0 +1,12 @@
+{% extends 'base.jinja2' %}
+{% set active_page = "auth confirm fail" %}
+
+{% block header -%}
+  <h1>{% block title %}Email Confirmation Failed{% endblock %}</h1>
+{%- endblock %}
+{% block content -%}
+<div class="alert alert-danger" role="alert">
+Your email confirmation link is invalid, or may have expired. Click <a href="{{url_for('auth.resend_confirmation')}}">here</a> to send a new email confirmation.</a>
+</div>
+</script>
+{%- endblock %}

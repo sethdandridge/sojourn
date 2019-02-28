@@ -1,0 +1,12 @@
+{% extends 'base.jinja2' %}
+{% set active_page = "auth confirm fail" %}
+
+{% block header -%}
+  <h1>{% block title %}Email Confirmation Required{% endblock %}</h1>
+{%- endblock %}
+{% block content -%}
+<div class="alert alert-danger" role="alert">
+Whoa there buckaroo! You must confirm your email before using Fortnite. If you need us to to resend the confirmation email, click <a href="{{url_for('auth.resend_confirmation')}}">here</a>.
+</div>
+</script>
+{%- endblock %}

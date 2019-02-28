@@ -1,0 +1,24 @@
+{% extends 'base.jinja2' %}
+{% set active_page = "auth confirm success" %}
+
+{% block header -%}
+  <h1>{% block title %}Email Confirmation Successful!{% endblock %}</h1>
+{%- endblock %}
+{% block content -%}
+You can access the dashboard by clicking <a href="{{url_for('dashboard.index')}}">here</a> or you will be automatically redirected in <span id="countdown">7</span> seconds.
+
+<script>
+window.setTimeout(function(){
+  window.location.href = "{{url_for('dashboard.index')}}";
+}, 7000);
+
+setInterval(function(){
+  var countdown = document.getElementById("countdown");
+  var seconds_left = Number(countdown.innerHTML);
+  if (seconds_left > 1) {
+    countdown.innerHTML = seconds_left - 1;
+  }
+}, 1000);
+
+</script>
+{%- endblock %}

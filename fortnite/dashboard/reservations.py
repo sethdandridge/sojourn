@@ -1,9 +1,9 @@
+from datetime import timedelta
+
 from flask import g, render_template, request
 from werkzeug.exceptions import abort
 
-from datetime import timedelta
-
-from ..login import login_required
+from ..auth import login_required
 from ..db import get_db
 from . import bp
 
@@ -11,6 +11,9 @@ from . import bp
 @bp.route("/reservations")
 @login_required
 def reservations():
+    if not g.property:
+        abort(403)
+
     sql = (
         "SELECT reservation.*, "
         "CASE WHEN reservation_status.status = 'canceled' THEN 'Canceled' "

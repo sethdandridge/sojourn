@@ -30,14 +30,8 @@ def create_app(test_config=None):
     from . import db
     db.init_app(app)
 
-    from . import register
-    app.register_blueprint(register.bp)
-
-    from . import login
-    app.register_blueprint(login.bp)
-
-    from . import logout
-    app.register_blueprint(logout.bp)
+    from . import auth
+    app.register_blueprint(auth.bp) 
 
     from . import dashboard
     app.register_blueprint(dashboard.bp)

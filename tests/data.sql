@@ -1,25 +1,30 @@
-INSERT INTO "user" (email, password, first_name, last_name)
+INSERT INTO "user" (email, password, first_name, last_name, is_confirmed)
 VALUES
   ('admin@admin.com', 
   'pbkdf2:sha256:50000$Io4fJIjy$f1738f6c8b5be582c608e201c2d915a0387b4d97ca141b2dea8e30185e1f39ed',
   'admin',
-  'admin'),
+  'admin',
+  TRUE),
   ('user@user.com',
   'pbkdf2:sha256:50000$Io4fJIjy$f1738f6c8b5be582c608e201c2d915a0387b4d97ca141b2dea8e30185e1f39ed',
   'user',
-  'user'),
+  'user',
+  TRUE),
   ('notguest@notguest.com',
   'pbkdf2:sha256:50000$Io4fJIjy$f1738f6c8b5be582c608e201c2d915a0387b4d97ca141b2dea8e30185e1f39ed',
   'notguest',
-  'notguest'),
+  'notguest',
+  TRUE),
   ('limited@limited.com',
   'pbkdf2:sha256:50000$Io4fJIjy$f1738f6c8b5be582c608e201c2d915a0387b4d97ca141b2dea8e30185e1f39ed',
   'limited',
-  'limited'),
+  'limited',
+  TRUE),
   ('unlimited@unlimited.com',
   'pbkdf2:sha256:50000$Io4fJIjy$f1738f6c8b5be582c608e201c2d915a0387b4d97ca141b2dea8e30185e1f39ed',
   'unlimited',
-  'unlimited');
+  'unlimited',
+  TRUE);
 
 INSERT INTO property (name, owner_user_id)
 VALUES

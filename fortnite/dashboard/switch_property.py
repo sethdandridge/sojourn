@@ -1,13 +1,14 @@
 from flask import redirect, url_for, session, g, request
 from werkzeug.exceptions import abort
 
-from ..login import login_required
+from ..auth import login_required, email_confirmation_required
 from ..db import get_db
 from . import bp
 
 
 @bp.route("/switch_property/<int:property_id>")
 @login_required
+@email_confirmation_required
 def switch_property(property_id):
     # double check  user is a guest of property (g.property logic does this as well)
     sql = "SELECT * FROM user_to_property WHERE property_id = %s AND user_id = %s; "

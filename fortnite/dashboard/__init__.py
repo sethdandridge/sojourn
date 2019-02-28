@@ -2,7 +2,7 @@ from flask import Blueprint, g, redirect, render_template, session
 from werkzeug.exceptions import abort
 import functools
 
-from ..login import login_required
+from ..auth import login_required, email_confirmation_required
 from ..db import get_db
 
 bp = Blueprint("dashboard", __name__)
@@ -15,6 +15,7 @@ from . import switch_property
 
 @bp.route("/")
 @login_required
+@email_confirmation_required
 def index():
     return render_template("dashboard/index.jinja2")
 
@@ -55,3 +56,5 @@ def load_active_property():
             else:
                 g.property = g.properties[0]
                 session["active_property_id"] = g.property["id"]
+    else:
+        g.property = None

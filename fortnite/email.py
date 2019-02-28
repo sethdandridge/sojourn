@@ -31,7 +31,6 @@ def mail_registration_confirmation(user_id):
                   sender="accounts@fortnite.com",
                   recipients=["sethdan@gmail.com"])
     mail.send(msg)
-    return msg_body
 
 def mail_password_reset(user_id):
     return True

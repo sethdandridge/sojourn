@@ -1,13 +1,14 @@
 from flask import flash, g, redirect, render_template, request, url_for, session
 from werkzeug.exceptions import abort
 
-from ..login import login_required
+from ..auth import login_required, email_confirmation_required
 from ..db import get_db
 from . import bp
 
 
 @bp.route("/create_property", methods=("GET", "POST"))
 @login_required
+@email_confirmation_required
 def create_property():
     if request.method == "POST":
         property_name = request.form.get("name")
@@ -47,5 +48,6 @@ def create_property():
 
 @bp.route("/create_property/success")
 @login_required
+@email_confirmation_required
 def create_property_success():
     return render_template("dashboard/book_success.jinja2")

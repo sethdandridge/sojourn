@@ -1,8 +1,9 @@
-from flask import Blueprint, g, redirect, render_template, session
-from werkzeug.exceptions import abort
 import functools
 
-from ..login import login_required
+from flask import Blueprint, g, redirect, render_template, session
+from werkzeug.exceptions import abort
+
+from ..auth import login_required
 from ..db import get_db
 
 
