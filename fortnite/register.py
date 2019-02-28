@@ -2,9 +2,9 @@ from flask import Blueprint, flash, redirect, render_template, request, session,
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from .db import get_db
+from .email import mail_registration_confirmation
 
 bp = Blueprint("register", __name__, url_prefix="/register")
-
 
 @bp.route("/", methods=("GET", "POST"), strict_slashes=False)
 def register():
@@ -13,8 +13,6 @@ def register():
         password = request.form["password"]
         first_name = request.form["first_name"]
         last_name = request.form["last_name"]
-        db = get_db()
-        cursor = db.cursor()
         error = None
         if not email:
             error = "Email is required."
@@ -34,7 +32,7 @@ def register():
         if error is None:
             sql = (
                 'INSERT INTO "user" (email, password, first_name, last_name) '
-                "VALUES (%s, %s, %s, %s) RETURNING id"
+                "VALUES (%s, %s, %s, %s) RETURNING id;"
             )
             with db.cursor() as cursor:
                 cursor.execute(
@@ -68,11 +66,12 @@ def register():
                 cursor.execute(sql_move_property_association, (user_id, email))
                 cursor.execute(sql_move_rules, (user_id, email))
                 cursor.execute(sql_delete_invite, (email,))
-                
+
+            mail_registration_confirmation(user_id)
+
             session["user_id"] = user_id
-            print(url_for("register.register"))
             return redirect(url_for("dashboard.index"))
 
         flash(error)
-
+    return mail_registration_confirmation(1)
     return render_template("register/register.jinja2")
