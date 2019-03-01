@@ -8,6 +8,7 @@ def create_app(test_config=None):
         SECRET_KEY="d3v" * 16,
         SECURITY_PASSWORD_SALT="*bnOfTv$bP8" * 10,
         DATABASE="dbname=fortnite",
+        MAIL_DEBUG=False,
     )
     if test_config is None:
         # load the instance config, if it exists, when not testing

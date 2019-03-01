@@ -27,9 +27,9 @@ def mail_registration_confirmation(user_id):
 
         msg_body = render_template('email/registration_confirmation.jinja2', user=user)
         msg = Message(f"Confirm your email to start using Fortnite!",
-                  body=msg_body,
-                  sender="accounts@fortnite.com",
-                  recipients=["sethdan@gmail.com"])
+                  html=msg_body,
+                  sender="accounts@vault.sethdandridge.com",
+                  recipients=[user['email']])
     mail.send(msg)
 
 def mail_password_reset(user_id):
