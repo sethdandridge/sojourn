@@ -2,8 +2,14 @@
 {% set active_page = "dashboard index" %}
 
 {% block header -%}
-  <h1>{% block title %}Dashboard{% endblock %}</h1>
+  <!-- <h1>{% block title %}Dashboard{% endblock %}</h1> -->
 {%- endblock %}
 {% block content -%}
-Welcome home, {{ g.user['first_name']|e }}
+<p>Welcome home, {{ g.user['first_name']|e }}!</p>
+{% if not g.property %}
+<p>You are not a guest of any properties. To book a reservation, an owner must invite you to be their guest.</p>
+<p>To add your own property, click <a href="{{ url_for('dashboard.create_property') }}">here</a>.</p>
+{% else %}
+<p>To book a reservation at {{ g.property['name']|e }} click <a href="{{ url_for('dashboard.book') }}">here</a>.</p>
+{% endif %}
 {%- endblock %}

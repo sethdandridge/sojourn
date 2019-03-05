@@ -1,6 +1,6 @@
 import pytest
 from flask import g, session
-from fortnite.db import get_db
+from app.db import get_db
 
 
 def test_admin_reservations(app, auth, client):

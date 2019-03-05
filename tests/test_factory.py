@@ -1,4 +1,4 @@
-from fortnite import create_app
+from app import create_app
 
 
 def test_config():

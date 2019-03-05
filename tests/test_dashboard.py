@@ -1,7 +1,7 @@
 import pytest
 from flask import g, session
-from fortnite.db import get_db
-from fortnite.dashboard.book import get_booked_dates
+from app.db import get_db
+from app.dashboard.book import get_booked_dates
 import datetime
 
 def test_book(app, client, auth):

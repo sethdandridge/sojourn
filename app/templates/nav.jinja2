@@ -9,7 +9,7 @@
       (url_for('auth.logout'), 'logout', 'Log Out', True, False, True),
   ] -%}
   {% set active_page = active_page -%}
-  <a class="navbar-brand" href="/">🏝</a>
+  <a class="navbar-brand" href="/">🏝 {{ config['APP_NAME'] }}</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls=".navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>

@@ -6,7 +6,7 @@
 {%- endblock %}
 {% block content -%}
 <div class="alert alert-danger" role="alert">
-Whoa there buckaroo! You must confirm your email before using Fortnite. If you need us to to resend the confirmation email, click <a href="{{url_for('auth.resend_confirmation')}}">here</a>.
+Whoa there buckaroo! You must confirm your email before using {{ config['APP_NAME'] }}. If you need us to to resend the confirmation email, click <a href="{{url_for('auth.resend_confirmation')}}">here</a>.
 </div>
 </script>
 {%- endblock %}

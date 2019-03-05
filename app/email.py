@@ -26,14 +26,22 @@ def mail_registration_confirmation(user_id):
         user['confirmation_token'] = generate_confirmation_token(user_id)
 
         msg_body = render_template('email/registration_confirmation.jinja2', user=user)
-        msg = Message(f"Confirm your email to start using Fortnite!",
+        msg = Message(f"Confirm your email to start using {current_app.config['APP_NAME']}!",
                   html=msg_body,
-                  sender="accounts@vault.sethdandridge.com",
+                  sender=(current_app.config['APP_NAME'], "accounts@vault.sethdandridge.com"),
                   recipients=[user['email']])
     mail.send(msg)
 
-def mail_password_reset(user_id):
-    return True
+def mail_password_reset(user):
+    user = dict(user)
+    user['password_reset_token'] = generate_confirmation_token(user['id']) 
+
+    msg_body = render_template('email/reset_password.jinja2', user=user)
+    msg = Message(f"Confirm your email to start using {current_app.config['APP_NAME']}!",
+          html=msg_body,
+          sender=(current_app.config['APP_NAME'], "accounts@vault.sethdandridge.com"),
+          recipients=[user['email']])
+    mail.send(msg)
 
 # invitation
 def mail_invitation_existing_user(invite_id, owner_user_id, property_id):

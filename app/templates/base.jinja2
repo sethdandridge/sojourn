@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-  <title>{% block title %}{% endblock %} - Fortnite</title>
+  <title>{% block title %}{% endblock %} - {{ config['APP_NAME'] }}</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='css/fortnite.css') }}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='css/datepicker.min.css') }}" />
@@ -12,10 +12,16 @@
 <body>
 {% include "nav.jinja2" %}
 <main role="main" class="container">
-  {% for message in get_flashed_messages() %}
-  <div class="alert alert-danger" role="alert">
-    {{ message|e }}
-  </div>
+  {% for category, message in get_flashed_messages(with_categories=true) %}
+    {% if category == 'success' %}
+      <div class="alert alert-success" role="alert">
+        {{ message|e }}
+      </div>
+    {% else %}
+      <div class="alert alert-danger" role="alert">
+        {{ message|e }}
+      </div>
+    {% endif %}
   {% endfor -%}
   <header>
     {% block header %}{% endblock %}
