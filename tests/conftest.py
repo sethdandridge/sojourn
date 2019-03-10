@@ -11,8 +11,12 @@ with open(os.path.join(os.path.dirname(__file__), "data.sql"), "rb") as f:
 
 @pytest.fixture
 def app():
-
-    app = create_app({"TESTING": True, "DATABASE": "dbname=fortnite_test"})
+    test_config = {
+        "SECRET_KEY": "testkey",
+        "SECURITY_PASSWORD_SALT": "passwordsalt",
+        "TESTING": True,
+    }
+    app = create_app(test_config=test_config)
 
     with app.app_context():
         init_db()

@@ -31,6 +31,8 @@
 <p>You have no existing reservations. <a href="{{url_for('dashboard.book')}}">Click here to book a reservation.</a>
 {% endif %}
 <script>
+
+
 function cancel(id) {
   if (confirm("Are you sure you want to delete this reservation? Click OK to delete.")) {
     var oReq = new XMLHttpRequest();

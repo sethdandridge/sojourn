@@ -4,6 +4,7 @@
       (url_for('dashboard.reservations'), 'dashboard reservations', 'Reservations', True, False, True),
   ] -%}
   {% set right_navigation_bar = [
+      (url_for('auth.account'), 'auth account', 'Account Settings', True, False, True),
       (url_for('auth.register'), 'register', 'Register', False, True, False),
       (url_for('auth.login'), 'login', 'Log In', False, True, False),
       (url_for('auth.logout'), 'logout', 'Log Out', True, False, True),

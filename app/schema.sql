@@ -25,20 +25,20 @@ CREATE TABLE property_status (
 CREATE TABLE property (
   id SERIAL PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
-  owner_user_id INTEGER NOT NULL REFERENCES "user" (id),
+  owner_user_id INTEGER NOT NULL REFERENCES "user" (id) ON DELETE CASCADE,
   status_id INTEGER NOT NULL DEFAULT 1 REFERENCES property_status (id)
 );
 
 CREATE TABLE user_to_property (
-  user_id INTEGER NOT NULL REFERENCES "user" (id),
-  property_id INTEGER NOT NULL REFERENCES property (id),
+  user_id INTEGER NOT NULL REFERENCES "user" (id) ON DELETE CASCADE,
+  property_id INTEGER NOT NULL REFERENCES property (id) ON DELETE CASCADE,
   is_admin BOOLEAN NOT NULL DEFAULT FALSE,
   note VARCHAR(255)
 );
 
 CREATE TABLE user_to_property_reservation_limits (
-  user_id INTEGER NOT NULL REFERENCES "user" (id),
-  property_id INTEGER NOT NULL REFERENCES property (id),
+  user_id INTEGER NOT NULL REFERENCES "user" (id) ON DELETE CASCADE,
+  property_id INTEGER NOT NULL REFERENCES property (id) ON DELETE CASCADE,
   max_upcoming INTEGER CHECK (max_upcoming >= 0),
   max_duration INTEGER CHECK (max_duration >= 0),
   max_per_month INTEGER CHECK (max_per_month >= 0),
@@ -51,7 +51,7 @@ CREATE TABLE user_to_property_reservation_limits (
 
 CREATE TABLE invite (
   id SERIAL PRIMARY KEY,
-  property_id INTEGER NOT NULL REFERENCES property (id),
+  property_id INTEGER NOT NULL REFERENCES property (id) ON DELETE CASCADE,
   email VARCHAR(320) NOT NULL,
   note VARCHAR(255)
 );
@@ -76,8 +76,8 @@ CREATE TABLE reservation_status (
 
 CREATE TABLE reservation (
   id SERIAL PRIMARY KEY,
-  user_id INTEGER NOT NULL REFERENCES "user" (id),
-  property_id INTEGER NOT NULL REFERENCES property (id),
+  user_id INTEGER NOT NULL REFERENCES "user" (id) ON DELETE CASCADE,
+  property_id INTEGER NOT NULL REFERENCES property (id) ON DELETE CASCADE,
   name VARCHAR(255),
   arrival DATE NOT NULL,
   departure DATE NOT NULL CHECK (departure > arrival),

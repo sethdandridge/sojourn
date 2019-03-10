@@ -39,6 +39,7 @@ from . import confirm
 from . import resend_confirmation
 from . import send_password_reset
 from . import reset_password
+from . import account
 
 @bp.before_app_request
 def load_logged_in_user():

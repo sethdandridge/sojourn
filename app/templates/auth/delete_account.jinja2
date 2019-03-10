@@ -1,0 +1,41 @@
+{% extends 'base.jinja2' %}
+{% set active_page = "admin delete_acount" %}
+
+{% block header %}
+<div class="form-header"><h1>{% block title %}Delete Account{% endblock %}</h1> 
+      <p>WARNING! If you click "Delete Account" your account will be permanently deleted!</p>
+      <!-- <p>If you are the primary owner of any properties, those properties will be deleted as well!</p>
+      <p>If you have any reservations, those reservations will be canceled!</p>
+      <p>If you are the guest at any properties, you will no longer be a guest at those properties!</p> -->
+      <p>THIS ACTION IS NOT REVERSIBLE!</p>
+</div>
+{% endblock %}
+
+{% block content %}
+<center>
+<form method="post">
+      <button type="submit" class="btn btn-danger">Delete Account</button>
+      <a href="{{url_for('auth.account')}}">
+        <button type="button" class="btn btn-secondary">Cancel</button>
+      </a>
+    </div>
+  </form>
+
+<!-- <script>
+
+function reqListener () {
+  console.log(this.responseText);
+  console.log(this.status);
+}
+
+function delete_account() {
+  if (confirm("Are you sure you want to delete your account? Click OK to delete.")) {
+    var oReq = new XMLHttpRequest();
+    //oReq.addEventListener("load", reqListener);
+    oReq.open("POST", "{{url_for('auth.delete_account')}}");
+    oReq.send();
+  }
+  window.location.pathname = '/register';
+}
+</script> -->
+{% endblock %}
