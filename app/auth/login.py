@@ -25,9 +25,15 @@ def login():
             user = cursor.fetchone()
 
         if user is None:
-            error = "Incorrect username. Click 'Register' to create an account."
+            error = (
+                f"Incorrect username. Click <a href='{url_for('auth.register')}'>here</a> "
+                f"to create an account. "
+            )
         elif not check_password_hash(user["password"], password):
-            error = "Incorrect password. Click 'Forgot Password' to reset your password"
+            error = (
+                f"Incorrect password. Click <a href='{url_for('auth.send_password_reset')}'>here</a> "
+                f"to reset your password. "
+            )
 
         if error is None:
             session.clear()
@@ -36,6 +42,6 @@ def login():
             
             return redirect(next or url_for("index"))
 
-        flash(error)
+        flash(error, "safe")
 
     return render_template("auth/login.jinja2")

@@ -13,14 +13,26 @@
 {% include "nav.jinja2" %}
 <main role="main" class="container">
   {% for category, message in get_flashed_messages(with_categories=true) %}
-    {% if category == 'success' %}
-      <div class="alert alert-success" role="alert">
-        {{ message|e }}
-      </div>
+    {% if 'safe' not in category %}
+      {% if 'success' in category %}
+        <div class="alert alert-success" role="alert">
+          {{ message|e }}
+        </div>
+      {% else %}
+        <div class="alert alert-danger" role="alert">
+          {{ message|e }}
+        </div>
+      {% endif %}
     {% else %}
-      <div class="alert alert-danger" role="alert">
-        {{ message|e }}
-      </div>
+      {% if 'success' in category %}
+        <div class="alert alert-success" role="alert">
+          {{ message }}
+        </div>
+      {% else %}
+        <div class="alert alert-danger" role="alert">
+          {{ message }}
+        </div>
+      {% endif %}
     {% endif %}
   {% endfor -%}
   <header>
