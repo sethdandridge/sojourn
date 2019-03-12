@@ -1,4 +1,4 @@
-from flask import render_template, g, request, url_for, redirect, flash
+from flask import render_template, g, request, url_for, redirect, flash, current_app
 
 from ..db import get_db
 from ..email import mail_password_reset
@@ -23,9 +23,11 @@ def send_password_reset():
                     f"User {email} not found. Click register to create an account."
                 )
         if not error:
-            mail_password_reset(user) 
+            mail_password_reset(user)
             flash("Password reset instructions sent! Check your email to reset your password.", "success")
+            current_app.logger.info(f'{user["id"]} ({user["email"]}) requested password reset')
             return redirect(url_for('auth.login'))
         else:
+            current_app.logger.info(f'{request.form.get("email")} requested password reset error: {error}')
             flash(error)
     return render_template("auth/send_password_reset.jinja2")

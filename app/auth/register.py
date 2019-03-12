@@ -1,4 +1,4 @@
-from flask import Blueprint, flash, redirect, render_template, request, session, url_for
+from flask import Blueprint, flash, redirect, render_template, request, session, url_for, current_app
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from ..db import get_db
@@ -70,8 +70,10 @@ def register():
 
             session["user_id"] = user_id
 
+            current_app.logger.info(f"{email} created an account")
             return redirect(url_for('index'))
-        else: 
+        else:
+            current_app.logger.info(f"User registration error: {error}") 
             flash(error)
  
     return render_template("auth/register.jinja2")

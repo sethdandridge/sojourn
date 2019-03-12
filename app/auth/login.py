@@ -1,6 +1,6 @@
 from urllib.parse import urlparse
 
-from flask import flash, redirect, render_template, request, session, url_for, g
+from flask import flash, redirect, render_template, request, session, url_for, g, current_app
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from ..db import get_db
@@ -38,10 +38,10 @@ def login():
         if error is None:
             session.clear()
             session["user_id"] = user["id"]
-
-            
+            current_app.logger.info(f'User {user["id"]} ({user["email"]} logged in)')
             return redirect(next or url_for("index"))
-
-        flash(error, "safe")
+        else:
+            current_app.logger.info(f"Login error: {error}")
+            flash(error, "safe")
 
     return render_template("auth/login.jinja2")

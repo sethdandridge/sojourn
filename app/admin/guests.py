@@ -12,7 +12,7 @@ from . import admin_required
 @admin_required
 def guests():
     sql = (
-        'SELECT * FROM "user"  '
+        'SELECT * FROM "user" '
         'JOIN user_to_property ON user_to_property.user_id = "user".id '
         "WHERE user_to_property.property_id = %s; "
     )
@@ -392,7 +392,7 @@ def invite_guest():
                         ),
                     )
 
-            flash(f"Invited {email}")
+            flash(f"Invited {email}", "success")
 
             return redirect(url_for("admin.guests"))
 

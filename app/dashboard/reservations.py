@@ -1,6 +1,6 @@
 from datetime import timedelta
 
-from flask import g, render_template, request
+from flask import g, render_template, request, current_app
 from werkzeug.exceptions import abort
 
 from ..auth import login_required
@@ -57,7 +57,7 @@ def reservations():
         reservation["id"] = result["id"]
 
         reservations.append(reservation)
-
+    
     return render_template("dashboard/reservations.jinja2", reservations=reservations)
 
 

@@ -1,4 +1,4 @@
-from flask import Blueprint, flash, redirect, render_template, request, session, url_for, g
+from flask import Blueprint, flash, redirect, render_template, request, session, url_for, g, current_app
 from werkzeug.security import check_password_hash, generate_password_hash
 
 
@@ -56,10 +56,11 @@ def account():
                     )
 
             flash("Account information successfully updated!", "success")
-
+            current_app.logger.info(f'{g.user["id"]} ({g.user["email"]}) updated their account settings')
             return redirect(url_for('index'))
 
-        else: 
+        else:
+            current_app.logger.info(f'{g.user["id"]} ({g.user["email"]}) updated their account settings error: {error}')
             flash(error)
  
     return render_template("auth/account.jinja2")
@@ -76,6 +77,7 @@ def delete_account():
             cursor.execute(sql, (g.user['id'],))
  
         flash("Account deleted :(", "success")
+        current_app.logger.info(f'{g.user["id"]} ({g.user["email"]}) deleted their account')
         return redirect(url_for('dashboard.index')) 
 
     return render_template('auth/delete_account.jinja2')

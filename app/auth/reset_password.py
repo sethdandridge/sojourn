@@ -41,11 +41,11 @@ def reset_password():
             session['user_id'] = user_id # there is a bug here if the user is deleted between sending password reset and resetting password
 
             flash("Password successfully reset!", "success")
-
+            current_app.logger.info(f"{g.user['id']} ({g.user['email']}) reset their password")
             return redirect(url_for('dashboard.index'))
 
-
     for error in errors:
+        current_app.logger.info(f"{g.user['id']} ({g.user['email']}) password reset error: {error}")
         flash(error)
     return render_template("auth/reset_password.jinja2")
 

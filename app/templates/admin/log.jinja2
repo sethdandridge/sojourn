@@ -1,0 +1,32 @@
+{% extends 'base.jinja2' %}
+{% set active_page = "admin log" %}
+
+{% block header %}
+  <h1>{% block title %}Log{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+{% if log_rows %}
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Date</th>
+      <th scope="col">Log Message</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for log_row in log_rows %}
+    <tr>
+      <td>{{log_row['date']}}</td>
+      <td>
+      <a href="{{url_for('admin.edit_guest', guest_id=log_row['user_id'])}}">{{log_row['name']|e}}</a>{{log_row['message']|e}}
+      </td>
+    </tr> 
+  {%- endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>There is nothing in the log to display.</p>
+{% endif %}
+{% endblock %}
+

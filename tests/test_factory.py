@@ -5,8 +5,9 @@ def test_config():
     test_config = {
         "SECRET_KEY": "testkey",
         "SECURITY_PASSWORD_SALT": "passwordsalt",
+        "TESTING": True,
     }
-    assert create_app({"TESTING": True}, test_config=test_config).testing
+    assert create_app(test_config=test_config).testing
 
 
 def test_hello(client):

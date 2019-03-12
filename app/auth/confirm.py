@@ -34,7 +34,9 @@ def confirm():
             cursor.execute(sql, (user_id,))
         
         session['user_id'] = user_id
+        current_app.logger.info(f"{user_id} confirmed their email.")
         return render_template("auth/confirm_success.jinja2")
     else:
+        current_app.logger.info(f"Email confirmation error.")
         return render_template("auth/confirm_fail.jinja2")
 

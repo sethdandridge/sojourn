@@ -1,4 +1,4 @@
-from flask import flash, g, redirect, render_template, request, url_for, session
+from flask import flash, g, redirect, render_template, request, url_for, session, current_app
 from werkzeug.exceptions import abort
 
 from ..auth import login_required, email_confirmation_required
@@ -38,9 +38,10 @@ def create_property():
                 cursor.execute(sql, (g.user["id"], property_id, True))
 
             session["active_property_id"] = property_id
-
+            current_app.logger.info(f'{g.user["id"]} ({g.user["email"]}) created new property {property_id} ({property_name})')
             return redirect(url_for("dashboard.index"))
         else:
+            current_app.logger.info(f'{g.user["id"]} ({g.user["email"]}) created new property error: {error}')
             flash(error)
 
     return render_template("dashboard/create_property.jinja2")
