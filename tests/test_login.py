@@ -19,6 +19,26 @@ def test_login(app, client, auth):
         client.get("/")
         assert session.get('user_id') is None
 
+def test_login_next(app, client, auth):
+    response = client.get("/book")
+    assert "next=%2Fbook%3F" in response.headers['Location']
+    response = client.post("/login?next=/book",
+        data = {
+            "email": "user@user.com",
+            "password": "a"
+        }
+    )
+    assert response.headers['Location'] == "http://localhost/book"
+
+    response = client.post("/login?next=http://corgiorgy.com",
+        data = {
+            "email": "user@user.com",
+            "password": "a"
+        }
+    )
+    assert response.headers['Location'] == "http://localhost/"
+    
+
 @pytest.mark.parametrize(
     ("email", "password", "message"),
     (
@@ -30,12 +50,3 @@ def test_login_validate_input(auth, email, password, message):
     response = auth.login(email, password)
     assert message in response.data
 
-
-def test_login_required(client, auth):
-    response = client.get("/")
-    # if no login cookie found, send to login page
-    assert "http://localhost/login" == response.headers["Location"]
-
-    auth.login()
-    response = client.get("/")
-    assert b"Log Out" in response.data

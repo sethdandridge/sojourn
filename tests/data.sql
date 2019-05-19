@@ -24,7 +24,12 @@ VALUES
   'pbkdf2:sha256:50000$Io4fJIjy$f1738f6c8b5be582c608e201c2d915a0387b4d97ca141b2dea8e30185e1f39ed',
   'unlimited',
   'unlimited',
-  TRUE);
+  TRUE),
+  ('uncomfirmed@uncomfirmed.com',
+  'pbkdf2:sha256:50000$Io4fJIjy$f1738f6c8b5be582c608e201c2d915a0387b4d97ca141b2dea8e30185e1f39ed',
+  'uncomfirmed',
+  'uncomfirmed',
+  FALSE);
 
 INSERT INTO property (name, owner_user_id)
 VALUES

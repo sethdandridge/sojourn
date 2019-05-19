@@ -15,7 +15,7 @@ CREATE TABLE "user" (
   password VARCHAR(255) NOT NULL,
   first_name VARCHAR(255) NOT NULL,
   last_name VARCHAR(255) NOT NULL,
-  is_confirmed BOOLEAN NOT NULL DEFAULT TRUE
+  is_confirmed BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE property_status (
@@ -174,6 +174,6 @@ VALUES
   (0, 'disabled'),
   (1, 'active');
 
-INSERT INTO "user" (first_name, last_name, email, password)
-VALUES
-('Seth', 'Dandridge', 'sethdan@gmail.com', 'pbkdf2:sha256:50000$RSFSs9gk$a043e05e9221d5509ffaf944859cedf0c894d7aa63b699bba7f1660a4dea6fac');
+-- INSERT INTO "user" (first_name, last_name, email, password)
+-- VALUES
+-- ('Seth', 'Dandridge', 'sethdan@gmail.com', 'pbkdf2:sha256:50000$RSFSs9gk$a043e05e9221d5509ffaf944859cedf0c894d7aa63b699bba7f1660a4dea6fac');

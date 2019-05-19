@@ -15,6 +15,7 @@ def app():
         "SECRET_KEY": "testkey",
         "SECURITY_PASSWORD_SALT": "passwordsalt",
         "TESTING": True,
+        "DATABASE": "dbname=fortnite_test"
     }
     app = create_app(test_config=test_config)
 

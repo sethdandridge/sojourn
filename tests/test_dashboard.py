@@ -5,6 +5,9 @@ from app.dashboard.book import get_booked_dates
 import datetime
 
 def test_book(app, client, auth):
+    auth.login(email="notguest@notguest.com")
+    assert client.get('/book').status_code == 403
+
     auth.login(email="unlimited@unlimited.com")
     assert client.get('/book').status_code == 200
     arrival = datetime.date.today() + datetime.timedelta(days=1)
@@ -143,6 +146,9 @@ def test_limited_booking(app, auth, client):
     assert b"too close to one or more of your upcoming" in response.data 
 
 def test_reservations(app, auth, client):
+    auth.login(email="notguest@notguest.com")
+    assert client.get('/reservations').status_code == 403
+
     auth.login()
 
     arrival = datetime.date.today() + datetime.timedelta(days=1)

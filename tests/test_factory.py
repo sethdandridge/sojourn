@@ -1,7 +1,8 @@
 from app import create_app
 
 
-def test_config(): 
+def test_config():
+    assert create_app() # no testing 
     test_config = {
         "SECRET_KEY": "testkey",
         "SECURITY_PASSWORD_SALT": "passwordsalt",
