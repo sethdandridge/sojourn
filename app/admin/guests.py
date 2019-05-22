@@ -6,7 +6,7 @@ from werkzeug.exceptions import abort
 from ..db import get_db
 from . import bp
 from . import admin_required
-
+from ..email import mail_invitation_existing_user
 
 @bp.route("/guests")
 @admin_required
@@ -326,6 +326,7 @@ def invite_guest():
                 cursor.execute(sql, (email,))
                 guest = cursor.fetchone()
 
+            # If they are a user
             if guest:
                 sql = (
                     "INSERT INTO user_to_property "
@@ -359,6 +360,8 @@ def invite_guest():
                             reservation_limits["is_owner_confirmation_required"],
                         ),
                     )
+                mail_invitation_existing_user(guest)
+            # If they are a new user
             else:
                 sql = (
                     "INSERT INTO invite (email, property_id) "

@@ -39,9 +39,6 @@ def create_app(test_config=None):
     app.logger.addHandler(rotating_file_handler)
     app.logger.removeHandler(default_handler)
 
-    from . import email
-    email.init_mail(app)
-
     from . import db
     db.init_app(app)
 

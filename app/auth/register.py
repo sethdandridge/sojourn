@@ -66,6 +66,8 @@ def register():
                 cursor.execute(sql_move_rules, (user_id, email))
                 cursor.execute(sql_delete_invite, (email,))
 
+            # Why require two database hits? To do: pass the user data directly so
+            # emailer subroutine doesn't have to query database
             mail_registration_confirmation(user_id)
 
             session["user_id"] = user_id
