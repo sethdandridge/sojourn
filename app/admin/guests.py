@@ -6,7 +6,7 @@ from werkzeug.exceptions import abort
 from ..db import get_db
 from . import bp
 from . import admin_required
-from ..email import mail_invitation_existing_user
+from ..email import mail_invitation_existing_user, mail_invitation_new_user
 
 @bp.route("/guests")
 @admin_required
@@ -394,6 +394,7 @@ def invite_guest():
                             reservation_limits["is_owner_confirmation_required"],
                         ),
                     )
+                mail_invitation_new_user(email)
 
             flash(f"Invited {email}", "success")
 

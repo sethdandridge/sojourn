@@ -5,6 +5,7 @@ from werkzeug.exceptions import abort
 
 from ..auth import login_required, email_confirmation_required
 from ..db import get_db
+from ..email import mail_reservation_confirmation, mail_reservation_approval_request
 from . import bp
 
 
@@ -224,7 +225,7 @@ def book():
         if limits and limits["is_owner_confirmation_required"]:
             reservation_status_id = 2
         else:
-            reservation_status_id = 1    
+            reservation_status_id = 1
  
         sql = (
             "INSERT INTO reservation "
@@ -245,6 +246,17 @@ def book():
                 ),
             )
             reservation_id = cursor.fetchone()["id"]
+        
+        reservation = {
+            'id': reservation_id, 
+            'reservation_name': reservation_name,
+            'arrival_date': arrival_date,
+            'departure_date': departure_date,
+        }
+        if reservation_status_id == 1:
+            mail_reservation_confirmation(reservation)
+        elif reservation_status_id == 2:
+            mail_reservation_approval_request(reservation)
 
         return redirect(url_for("dashboard.book_success", reservation=reservation_id))
 

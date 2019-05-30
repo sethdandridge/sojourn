@@ -6,6 +6,7 @@ from werkzeug.exceptions import abort
 from ..db import get_db
 from . import bp
 from . import admin_required
+from ..email import mail_reservation_approved
 
 @bp.route('/reservations/edit/<int:reservation_id>', methods=("GET", "POST"))
 @admin_required
@@ -13,6 +14,9 @@ def edit_reservation(reservation_id):
     sql = (
         'SELECT *, '
         ' CONCAT("user".first_name, \' \', "user".last_name) AS guest, '
+        ' "user".first_name AS first_name, '
+        ' "user".last_name AS last_name, '
+        ' "user".email AS email, '
         " TO_CHAR(arrival, 'Dy FMMM/FMDD/YY') as arrival, "
         " TO_CHAR(departure, 'Dy FMMM/FMDD/YY') as departure, "
         " departure - arrival AS nights, "
@@ -47,6 +51,9 @@ def edit_reservation(reservation_id):
             )
             with get_db().cursor() as cursor:
                 cursor.execute(sql, (status, reservation_id))
+
+            if reservation['status_id'] != 1 and status == 1:
+                mail_reservation_approved(reservation)
 
             return redirect(url_for('admin.calendar'))
 

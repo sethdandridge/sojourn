@@ -1,0 +1,11 @@
+{% extends 'email/base.jinja2' %}
+
+{% block title %}{{ g.property['name']|e }} reservation confirmation{% endblock %}
+
+{% block preheader %}Confirming your {{ (reservation['departure_date'] - reservation['arrival_date']).days }} night stay at {{ g.property['name']|e }}{% endblock %}
+
+{%- block content %}
+                        <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">Hi there, {{g.user['first_name']|e}}!</p>
+                        <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">Your {{ (reservation['departure_date'] - reservation['arrival_date']).days }} night stay at {{ g.property['name']|e }} is confirmed!</p>
+                        <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">To manage your reservation, visit the <a href="{{ config['APP_URL'] }}{{ url_for('dashboard.reservations') }}">Sojourn dashboard</a>.</p>
+{%- endblock -%}

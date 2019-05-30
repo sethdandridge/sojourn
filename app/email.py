@@ -74,30 +74,59 @@ def mail_password_reset(user):
 # invitation
 
 def mail_invitation_existing_user(guest):
-    # make a template for this
-    message_html = f"{g.user['first_name']} {g.user['last_name']} invited you to {g.property['name']}"
-    subject = "invitation"
+    message_html = render_template('email/invitation_existing_user.jinja2', guest=guest)
+    subject = f"{g.user['first_name']} {g.user['last_name']} invited you to {g.property['name']}"
     sender = f"{current_app.config['APP_NAME']} <invites@sojourn.house>"
     recipient = f"{guest['first_name']} {guest['last_name']} <{guest['email']}>"
     
     send(sender, recipient, subject, message_html)
 
 
-def mail_invitation_new_user(invite_id, owner_user_id, property_id):
-    return True
+def mail_invitation_new_user(invite_email):
+    message_html = render_template('email/invitation_new_user.jinja2', invite_email=invite_email)
+    subject = f"{g.user['first_name']} {g.user['last_name']} invited you to {g.property['name']}"
+    sender = f"{current_app.config['APP_NAME']} <invites@sojourn.house>"
+    recipient = invite_email
+
+    send(sender, recipient, subject, message_html)
 
 # booking
-def mail_reservation_notification(reservation_id):
+def mail_reservation_confirmation(reservation):
+    message_html = render_template('email/reservation_confirmation.jinja2', reservation=reservation)
+    subject = f"{g.property['name']} reservation confirmation"
+    sender = f"{current_app.config['APP_NAME']} <reservations@sojourn.house>"
+    recipient = f"{g.user['first_name']} {g.user['last_name']} <{g.user['email']}>"
+
+    send(sender, recipient, subject, message_html)
+
+def mail_reservatation_owner_notification(reservation):
     return True
 
-def mail_reservatation_owner_notification(reservation_id):
-    return True
+def mail_reservation_approval_request(reservation):
+    sql = (
+        'SELECT * FROM "user" '
+        'JOIN user_to_property ON user_to_property.user_id = "user".id '
+        'WHERE user_to_property.is_admin = TRUE '
+        'AND user_to_property.property_id = %s'
+    )
+    with get_db().cursor() as cursor:
+        cursor.execute(sql, (g.property['id'],))
+        admins = cursor.fetchall()
+    
+    subject = f"{g.user['first_name']} {g.user['last_name']}'s reservation at {g.property['name']} is pending approval"
+    sender = f"{current_app.config['APP_NAME']} <reservations@sojourn.house>"
+    for admin in admins:
+        recipient = f"{admin['first_name']} {admin['last_name']} <{admin['email']}>"
+        message_html = render_template('email/reservation_approval_request.jinja2', admin=admin, reservation=reservation)
+        send(sender, recipient, subject, message_html)
 
-def mail_reservation_approval_request(reservation_id):
-    return True
+def mail_reservation_approved(reservation):
+    message_html = render_template('email/reservation_approval.jinja2', reservation=reservation)
+    subject = f"Your stay at {g.property['name']} has been approved!"
+    sender = f"{current_app.config['APP_NAME']} <reservations@sojourn.house>"
+    recipient = f"{reservation['first_name']} {reservation['last_name']} <{reservation['email']}>"
 
-def mail_reservation_approved(user_owner_id, reservation_id):
-    return True
+    send(sender, recipient, subject, message_html)
 
 def mail_reservation_denied(user_owner_id, reservation_id):
     return True
