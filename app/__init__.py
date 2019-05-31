@@ -25,8 +25,10 @@ def create_app(testing=False):
         os.makedirs(app.instance_path)
     except OSError:
         pass
-
+ 
     # logging stuff
+    app.logger.removeHandler(default_handler)
+
     class RequestFormatter(logging.Formatter):
         def format(self, record):
             record.path = request.path
@@ -42,8 +44,8 @@ def create_app(testing=False):
         backupCount = 10
     )
     rotating_file_handler.setFormatter(formatter)
-    app.logger.addHandler(rotating_file_handler)
-    app.logger.removeHandler(default_handler)
+    if not testing: 
+        app.logger.addHandler(rotating_file_handler)
 
     from . import db
     db.init_app(app)
