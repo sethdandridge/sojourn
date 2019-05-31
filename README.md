@@ -1,5 +1,5 @@
 # Sojourn
-Platform for sharing your vacation home with friends and family
+Platform for sharing your vacation home with friends and family. [View the site in action!](https://sojourn.house)
 
 ## Installation (Ubuntu)
 - sudo apt-get install postgresql postgresql-contrib
