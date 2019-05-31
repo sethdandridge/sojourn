@@ -17,6 +17,14 @@ def get_ses_client():
     return g.ses_client
 
 def send(sender, recipient, subject, message_html):
+
+    # modify sending behavior for dev and testing environments
+    if current_app.config['TESTING']:
+        return
+    if current_app.config['DEBUG']:
+        recipient = current_app.config['DEBUG_MAIL_RECIPIENT']
+
+    # send the mail
     try:
         response = get_ses_client().send_email(
             Source=sender,

@@ -5,14 +5,20 @@ from logging.handlers import RotatingFileHandler
 from flask import Flask, request
 from flask.logging import default_handler
 
-def create_app(test_config=None):
+def create_app(testing=False):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True) 
+    
+    if app.env == 'development':
+        app.config.from_object('app.config.DevelopmentConfig')
+    elif app.env == 'production':
+        app.config.from_object('app.config.ProductionConfig')
+    else:
+        raise Exception("Flask environment not recognized! Set FLASK_ENV!")
 
-    app.config.from_object('app.config.ProductionConfig')
-
-    if test_config:
-        app.config.from_mapping(test_config)
+    # for running test suite
+    if testing:
+        app.config.from_object('app.config.TestingConfig')
 
     # ensure the instance folder exists
     try:
@@ -52,6 +58,7 @@ def create_app(test_config=None):
     from . import admin
     app.register_blueprint(admin.bp, url_prefix="/admin")    
 
+    # heartbeat route for testing <3
     @app.route("/nadia")
     def nadia():
         app.logger.info('Someone visited the Nadia page') 
