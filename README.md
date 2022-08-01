@@ -1,6 +1,8 @@
 # Sojourn
 Platform for sharing your vacation home with friends and family. [View the site in action!](https://sojourn.house)
 
+Note to prospective employers: This was written in 2019 and is no longer a fair representation of my abilities. I'm better now.
+
 ## Installation (Ubuntu)
 - sudo apt-get install postgresql postgresql-contrib
 - createdb book_app
