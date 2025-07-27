@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sojourn
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sojourn
+  template:
+    metadata:
+      labels:
+        app: sojourn
+    spec:
+      imagePullSecrets:
+      - name: ghcr-secret
+      containers:
+      - name: sojourn
+        image: ghcr.io/sethdandridge/sojourn:latest
+        ports:
+        - containerPort: 80
+        env:
+        - name: FLASK_ENV
+          value: "production"
+        - name: FLASK_SECRET_KEY
+          value: "INSECURE"
+        - name: FLASK_SECURITY_PASSWORD_SALT
+          value: "INSECURE"
+        - name: AWS_SES_ACCESS_KEY_ID
+          value: "INSECURE"
+        - name: AWS_SES_SECRET_ACCESS_KEY
+          value: "INSECURE"
+        - name: DATABASE
+          value: "INSECURE"
+        resources:
+          requests:
+            cpu: "50m"  # 2.5% of a CPU
+            memory: "64Mi"  # 3%-ish of a Gb
+          limits:
+            cpu: "250m"
+            memory: "160Mi"
+

@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: sojourn
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: "sojourn.house"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: sojourn
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - "sojourn.house"
+      secretName: sojourn-tls-secret
