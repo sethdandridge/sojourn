@@ -6,8 +6,10 @@ from flask import current_app, g
 from flask.cli import with_appcontext
 
 
+
 def get_db():
     if "db" not in g:
+        print(current_app.config)
         g.db = psycopg2.connect(
             current_app.config["DATABASE"], cursor_factory=DictCursor
         )

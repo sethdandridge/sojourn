@@ -8,10 +8,13 @@ from . import bp
 def send_password_reset(): 
     if request.method == "POST":
         email = request.form["email"]
+        captcha = request.form["country"]
 
         error = None
         if not email:
             error = "Email is required"
+        elif "sojourn" not in captcha.lower():
+            error = "Incorrect captcha response, please try again"
         
         if not error:
             sql = ('SELECT * FROM "user" WHERE email ILIKE %s;')

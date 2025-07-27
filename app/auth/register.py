@@ -12,6 +12,7 @@ def register():
         password = request.form["password"]
         first_name = request.form["first_name"]
         last_name = request.form["last_name"]
+        captcha = request.form["country"]
         error = None
         if not email:
             error = "Email is required."
@@ -21,6 +22,8 @@ def register():
             error = "First name is required."
         elif not last_name:
             error = "Last name is required."
+        elif "sojourn" not in captcha.lower():
+            error = "Incorrect captcha response, please try again"
         
         if not error:
             with get_db().cursor() as cursor:
