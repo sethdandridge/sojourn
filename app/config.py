@@ -5,7 +5,7 @@ class Config(object):
     TESTING = False
     APP_NAME = "Sojourn"
     APP_URL = "https://sojourn.house"
-    DATABASE="dbname=book_app"
+    DATABASE= os.getenv("DATABASE", "dbname=book_app")
     SECRET_KEY = os.getenv('FLASK_SECRET_KEY')
     SECURITY_PASSWORD_SALT = os.getenv('FLASK_SECURITY_PASSWORD_SALT')
     AWS_SES_ACCESS_KEY_ID = os.getenv('AWS_SES_ACCESS_KEY_ID')
