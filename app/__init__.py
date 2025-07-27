@@ -9,12 +9,12 @@ def create_app(testing=False):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True) 
     
-    if app.env == 'development':
-        app.config.from_object('app.config.DevelopmentConfig')
-    elif app.env == 'production':
-        app.config.from_object('app.config.ProductionConfig')
-    else:
-        raise Exception("Flask environment not recognized! Set FLASK_ENV!")
+    #if app.env == 'development':
+    #    app.config.from_object('app.config.DevelopmentConfig')
+    #elif app.env == 'production':
+    app.config.from_object('app.config.ProductionConfig')
+    #else:
+    #    raise Exception("Flask environment not recognized! Set FLASK_ENV!")
 
     # for running test suite
     if testing:

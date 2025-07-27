@@ -4,8 +4,8 @@ class Config(object):
     DEBUG = False
     TESTING = False
     APP_NAME = "Sojourn"
-    DATABASE="dbname=book_app"
     APP_URL = "https://sojourn.house"
+    DATABASE="dbname=book_app"
     SECRET_KEY = os.getenv('FLASK_SECRET_KEY')
     SECURITY_PASSWORD_SALT = os.getenv('FLASK_SECURITY_PASSWORD_SALT')
     AWS_SES_ACCESS_KEY_ID = os.getenv('AWS_SES_ACCESS_KEY_ID')
@@ -16,6 +16,7 @@ class ProductionConfig(Config):
 
 class DevelopmentConfig(Config):
     APP_NAME = "Sojourn (Dev)"
+    APP_URL = "http://dev.sojourn.house:6000"
     DEBUG = True
     DEBUG_MAIL_RECIPIENT = 'sethdan@gmail.com'
 
